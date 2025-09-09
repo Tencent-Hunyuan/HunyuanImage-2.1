@@ -208,6 +208,9 @@ pip install flash-attn==2.7.3 --no-build-isolation
 The details of download pretrained models are shown [here](ckpts/checkpoints-download.md).
 
 ## 🔑 Usage
+HunyuanImage-2.1 only supports 2K image generation (e.g. 2048x2048 for 1:1 images, 2560x1536 for 16:9 images, etc.).
+Generating images with 1K resolution will result in artifacts.
+Additionally, we recommend using the full generation pipeline for better quality (i.e. enabling prompt enhancement and refinment).
 
 ```python
 import torch

@@ -195,6 +195,10 @@ pip install flash-attn==2.7.3 --no-build-isolation
 模型的下载与说明请参考[这里](ckpts/checkpoints-download.md)。
 
 ## 🔑 使用
+HunyuanImage-2.1 仅支持 2K 分辨率图像生成（如 1:1 时为 2048x2048，16:9 时为 2560x1536 等）。
+使用其1K分辨率生成图像可能会带来画质下降与瑕疵。
+此外，我们建议使用完整的生成流程以获得更高画质（即启用提示词增强和精修功能）。
+
 
 ```python
 import torch
