@@ -8,7 +8,11 @@ def load_vae(device, vae_path: str = None, vae_precision: str = None):
     config = HunyuanVAE2D.load_config(vae_path)
     vae = HunyuanVAE2D.from_config(config)
 
-    ckpt = torch.load(Path(vae_path) / "pytorch_model.ckpt", map_location='cpu')
+    ckpt_path = Path(vae_path) / "pytorch_model.ckpt"
+    if not ckpt_path.exists():
+        ckpt_path = Path(vae_path) / "pytorch_model.pt"
+
+    ckpt = torch.load(ckpt_path, map_location='cpu')
     if "state_dict" in ckpt:
         ckpt = ckpt["state_dict"]
     vae_ckpt = {}
@@ -33,7 +37,11 @@ def load_refiner_vae(device, vae_path: str = None, vae_precision: str = "fp16"):
     config = AutoencoderKLConv3D.load_config(vae_path)
     vae = AutoencoderKLConv3D.from_config(config)
 
-    ckpt = torch.load(Path(vae_path) / "pytorch_model.ckpt", map_location='cpu')
+    ckpt_path = Path(vae_path) / "pytorch_model.ckpt"
+    if not ckpt_path.exists():
+        ckpt_path = Path(vae_path) / "pytorch_model.pt"
+
+    ckpt = torch.load(ckpt_path, map_location='cpu')
     if "state_dict" in ckpt:
         ckpt = ckpt["state_dict"]
     vae_ckpt = {}
