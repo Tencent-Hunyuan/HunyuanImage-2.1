@@ -212,11 +212,18 @@ pipe = pipe.to("cuda")
 prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
 image = pipe(
     prompt=prompt,
+    # HunyuanImage-2.1 支持的分辨率与宽高比示例：
+    # 16:9  -> width=2560, height=1536
+    # 4:3   -> width=2304, height=1792
+    # 1:1   -> width=2048, height=2048
+    # 3:4   -> width=1792, height=2304
+    # 9:16  -> width=1536, height=2560
+    # 建议使用上述长宽组合以获得最佳效果。
     width=2048,
     height=2048,
     use_reprompt=True,  # 启用提示词增强
     use_refiner=True,   # 启用精修模型, 以获得更高画质
-    # 对于蒸馏版模型，建议使用 8 步以加快推理速度；
+    # 对于蒸馏版模型，建议使用 8 步以加快推理速度
     # 对于非蒸馏版模型，建议使用 50 步以获得更高画质
     num_inference_steps=8 if "distilled" in model_name else 50, 
     guidance_scale=3.5,
