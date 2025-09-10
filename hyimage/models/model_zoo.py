@@ -66,7 +66,7 @@ def HUNYUANIMAGE_V2_1_DIT(**kwargs):
         use_cpu_offload=False,
         gradient_checkpointing=True,
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1.safetensors",
-        use_compile=False,
+        use_compile=kwargs.get("use_compile", True),
     )
 
 
@@ -77,7 +77,7 @@ def HUNYUANIMAGE_V2_1_DIT_CFG_DISTILL(**kwargs):
         use_cpu_offload=False,
         gradient_checkpointing=True,
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1-distilled.safetensors",
-        use_compile=False,
+        use_compile=kwargs.get("use_compile", True),
     )
 
 # =============================================================================
@@ -91,7 +91,7 @@ def HUNYUANIMAGE_REFINER_DIT(**kwargs):
         use_cpu_offload=False,
         gradient_checkpointing=True,
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage-refiner.safetensors",
-        use_compile=False,
+        use_compile=kwargs.get("use_compile", True),
     )
 
 def HUNYUANIMAGE_REFINER_VAE_16x(**kwargs):
