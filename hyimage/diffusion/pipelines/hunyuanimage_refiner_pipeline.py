@@ -147,7 +147,10 @@ class HunYuanImageRefinerPipeline(HunyuanImagePipeline):
         print("=" * 60)
 
         # Encode prompts
+        self.text_encoder.to(self.execution_device)
         pos_text_emb, pos_text_mask = self._encode_text(prompt)
+        if self.config.enable_text_encoder_offloading:
+            self.text_encoder.to('cpu')
 
         latents = self._prepare_latents(width, height, generator=generator, vae_downsampling_factor=16)
 
@@ -164,9 +167,12 @@ class HunYuanImageRefinerPipeline(HunyuanImagePipeline):
         image_tensor = image_tensor.unsqueeze(2)
 
         with torch.no_grad():
+            self.vae.to(self.execution_device)
             cond_latents = self.vae.encode(
                 image_tensor.to(self.device, dtype=self.vae.dtype)
             ).latent_dist.sample()
+            if self.config.enable_vae_offloading:
+                self.vae.to('cpu')
 
         # reorg tokens
         cond_latents = torch.cat((cond_latents[:, :, :1], cond_latents), dim=2)
@@ -193,6 +199,7 @@ class HunYuanImageRefinerPipeline(HunyuanImagePipeline):
         text_emb = pos_text_emb
         text_mask = pos_text_mask
 
+        self.dit.to(self.execution_device)
         for i, t in enumerate(tqdm(timesteps, desc="Refining", total=len(timesteps))):
             # Concatenate noise latents with condition latents for refiner input
             latent_model_input = torch.cat([latents, cond_latents], dim=1)
@@ -211,8 +218,13 @@ class HunYuanImageRefinerPipeline(HunyuanImagePipeline):
             )
 
             latents = self.step(latents, noise_pred, sigmas, i)
-
+        if self.config.enable_full_dit_offloading:
+            self.dit.to('cpu')
+        
+        self.vae.to(self.execution_device)
         refined_image = self._decode_latents(latents, reorg_tokens=True)
+        if self.config.enable_vae_offloading:
+            self.vae.to('cpu')
 
         # Convert to PIL Image
         refined_image = (refined_image.squeeze(0).permute(1, 2, 0) * 255).byte().numpy()

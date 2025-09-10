@@ -188,10 +188,13 @@ From the results, HunyuanImage 2.1 achieved a relative win rate of -1.36% agains
 
 **Hardware and OS Requirements:**
 - NVIDIA GPU with CUDA support.
-  - **Minimum:** 59 GB GPU memory for 2048x2048 image generation (batch size = 1).
+  - **Minimum requrement for now:** 36 GB GPU memory for 2048x2048 image generation.
+  
+  > ✨ An FP8-quantized model is coming soon, enabling even lower GPU memory requirements for inference, stay tuned 👀!
+  
+  > **Note:** The memory requirements above are measured with model CPU offloading enabled. If your GPU has sufficient memory, you may disable offloading for improved inference speed.
 - Supported operating system: Linux.
 
-> **Note:** The memory requirements above are measured with model CPU offloading enabled. If your GPU has sufficient memory, you may disable offloading for improved inference speed.
 
 ## 🛠️ Dependencies and Installation
 

@@ -1,3 +1,4 @@
+import copy
 import re
 import os
 from dataclasses import dataclass
@@ -37,9 +38,13 @@ class HunyuanImagePipelineConfig:
     reprompt_config: DictConfig
     refiner_model_name: str = "hunyuanimage-refiner"
 
-    enable_dit_offloading: bool = True
-    enable_reprompt_model_offloading: bool = True
-    enable_refiner_offloading: bool = True
+    enable_stage1_offloading: bool = True # offload models in stage1 pipeline when reprompt or refiner is working
+    enable_reprompt_model_offloading: bool = True # offload reprompt model after finishing
+    enable_refiner_offloading: bool = True # offload refiner model after finishing
+    enable_text_encoder_offloading: bool = True # offload text encoder after finishing
+    enable_full_dit_offloading: bool = True  # offload during text encoding and latent decoding
+    enable_vae_offloading: bool = True # offload vae after finishing
+    enable_byt5_offloading: bool = True # offload byt5 after finishing
 
     cfg_mode: str = "MIX_mode_0"
     guidance_rescale: float = 0.0
@@ -107,7 +112,7 @@ class HunyuanImagePipeline:
             config: Configuration object containing all model and pipeline settings
             **kwargs: Additional configuration options
         """
-        self.config = config
+        self.config = copy.deepcopy(config)
         self.default_sampling_steps = config.default_sampling_steps
         self.default_guidance_scale = config.default_guidance_scale
         self.shift = config.shift
@@ -120,10 +125,6 @@ class HunyuanImagePipeline:
         self.vae = None
         self.byt5_kwargs = None
         self.prompt_format = None
-
-        self.enable_dit_offloading = config.enable_dit_offloading
-        self.enable_reprompt_model_offloading = config.enable_reprompt_model_offloading
-        self.enable_refiner_offloading = config.enable_refiner_offloading
 
 
         self.cfg_mode = config.cfg_mode
@@ -151,14 +152,20 @@ class HunyuanImagePipeline:
         self._load_models()
 
     def _load_dit(self):
+        dit_device = None
+        if self.config.enable_full_dit_offloading:
+            dit_device = 'cpu'
+        else:
+            dit_device = self.device
+            
         try:
             dit_config = self.config.dit_config
-            self.dit = instantiate(dit_config.model)
+            self.dit = instantiate(dit_config.model, dtype=self.torch_dtype, device=dit_device)
             if dit_config.load_from:
                 load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
             else:
                 raise ValueError("Must provide checkpoint path for DiT model")
-            self.dit = self.dit.to(self.device, dtype=self.torch_dtype)
+            self.dit = self.dit.to(dit_device, dtype=self.torch_dtype)
             self.dit.eval()
             if getattr(dit_config, "use_compile", False):
                 self.dit = torch.compile(self.dit)
@@ -168,6 +175,15 @@ class HunyuanImagePipeline:
 
     def _load_text_encoder(self):
         try:
+            if self.config.enable_full_dit_offloading:
+                self.dit.to('cpu')
+
+            if self.config.enable_full_dit_offloading:
+                text_encoder_device = 'cpu'
+            else:
+                text_encoder_device = self.device
+
+
             text_encoder_config = self.config.text_encoder_config
             if not text_encoder_config.load_from:
                 raise ValueError("Must provide checkpoint path for text encoder")
@@ -186,7 +202,7 @@ class HunyuanImagePipeline:
                 text_encoder_path=os.path.join(text_encoder_config.load_from, "llm"),
                 prompt_template=prompt_template,
                 logger=None,
-                device=self.device,
+                device=text_encoder_device,
             )
             loguru.logger.info("✓ HunyuanImage text encoder loaded")
         except Exception as e:
@@ -206,8 +222,10 @@ class HunyuanImagePipeline:
 
     def _load_reprompt_model(self):
         try:
+            if self.config.enable_stage1_offloading:
+                self.offload()
             reprompt_config = self.config.reprompt_config
-            self._reprompt_model = instantiate(reprompt_config.model, models_root_path=reprompt_config.load_from, enable_offloading=self.enable_reprompt_model_offloading)
+            self._reprompt_model = instantiate(reprompt_config.model, models_root_path=reprompt_config.load_from, enable_offloading=self.config.enable_reprompt_model_offloading)
             loguru.logger.info("✓ Reprompt model loaded")
         except Exception as e:
             raise RuntimeError(f"Error loading reprompt model: {e}") from e
@@ -220,6 +238,8 @@ class HunyuanImagePipeline:
         if hasattr(self, '_refiner_pipeline') and self._refiner_pipeline is not None:
             return self._refiner_pipeline
         from hyimage.diffusion.pipelines.hunyuanimage_refiner_pipeline import HunYuanImageRefinerPipeline
+        if self.config.enable_stage1_offloading:
+            self.offload()
         self._refiner_pipeline = HunYuanImageRefinerPipeline.from_pretrained(self.config.refiner_model_name)
         return self._refiner_pipeline
 
@@ -309,6 +329,7 @@ class HunyuanImagePipeline:
         Returns:
             Tuple of (text_emb, text_mask)
         """
+        self.text_encoder.to(self.execution_device)
         text_inputs = self.text_encoder.text2tokens(prompt)
         with torch.no_grad():
             text_outputs = self.text_encoder.encode(
@@ -681,11 +702,10 @@ class HunyuanImagePipeline:
 
         user_prompt = prompt
         if use_reprompt:
-            if self.enable_dit_offloading:
-                self.to('cpu')
+            if self.config.enable_stage1_offloading:
+                self.offload()
             prompt = self.reprompt_model.predict(prompt)
-            if self.enable_dit_offloading:
-                self.to(self.execution_device)
+
 
         print("=" * 60)
         print("🖼️  HunyuanImage Generation Task")
@@ -709,8 +729,14 @@ class HunyuanImagePipeline:
         pos_text_emb, pos_text_mask = self._encode_text(prompt)
         neg_text_emb, neg_text_mask = self._encode_text(negative_prompt)
 
+        if self.config.enable_text_encoder_offloading:
+            self.text_encoder.to('cpu')
+
+        self.byt5_kwargs['byt5_model'].to(self.execution_device)
         pos_byt5_emb, pos_byt5_mask = self._encode_glyph(prompt)
         neg_byt5_emb, neg_byt5_mask = self._encode_glyph(negative_prompt)
+        if self.config.enable_byt5_offloading:
+            self.byt5_kwargs['byt5_model'].to('cpu')
 
         latents = self._prepare_latents(width, height, generator=generator)
 
@@ -732,6 +758,8 @@ class HunyuanImagePipeline:
             byt5_mask = pos_byt5_mask
 
         timesteps, sigmas = self.get_timesteps_sigmas(sampling_steps, shift)
+
+        self.dit.to(self.execution_device)
 
         for i, t in enumerate(tqdm(timesteps, desc="Denoising", total=len(timesteps))):
             latent_model_input = torch.cat([latents] * 2) if do_classifier_free_guidance else latents
@@ -760,15 +788,18 @@ class HunyuanImagePipeline:
             latents = self.step(latents, noise_pred, sigmas, i)
 
 
+        if self.config.enable_full_dit_offloading:
+            self.dit.to('cpu')
+        self.vae.to(self.execution_device)
         image = self._decode_latents(latents)
+        if self.config.enable_vae_offloading:
+            self.vae.to('cpu')
         image = (image.squeeze(0).permute(1, 2, 0) * 255).byte().numpy()
         pil_image = Image.fromarray(image)
 
         if use_refiner:
-            if self.enable_dit_offloading:
-                self.to('cpu')
-            if self.enable_refiner_offloading:
-                self.refiner_pipeline.to(self.execution_device)
+            if self.config.enable_stage1_offloading:
+                self.offload()
             pil_image = self.refiner_pipeline(
                 image=pil_image,
                 prompt=prompt,
@@ -781,10 +812,8 @@ class HunyuanImagePipeline:
                 guidance_scale=guidance_scale,
                 generator=generator,
             )
-            if self.enable_refiner_offloading:
-                self.refiner_pipeline.to('cpu')
-            if self.enable_dit_offloading:
-                self.to(self.execution_device)
+            if self.config.enable_refiner_offloading:
+                self.refiner_pipeline.offload()
 
         return pil_image
 
@@ -811,12 +840,23 @@ class HunyuanImagePipeline:
             Self
         """
         self.device = device
-        if self.dit is not None:
-            self.dit = self.dit.to(device, non_blocking=True)
-        if self.text_encoder is not None:
-            self.text_encoder = self.text_encoder.to(device, non_blocking=True)
+        if not self.config.enable_full_dit_offloading and not self.config.enable_stage1_offloading:
+            if self.dit is not None:
+                self.dit = self.dit.to(device, non_blocking=True)
+        if not self.config.enable_text_encoder_offloading:
+            if self.text_encoder is not None:
+                self.text_encoder = self.text_encoder.to(device, non_blocking=True)
         if self.vae is not None:
             self.vae = self.vae.to(device, non_blocking=True)
+        return self
+    
+    def offload(self):
+        if self.dit is not None:
+            self.dit = self.dit.to('cpu', non_blocking=True)
+        if self.text_encoder is not None:
+            self.text_encoder = self.text_encoder.to('cpu', non_blocking=True)
+        if self.vae is not None:
+            self.vae = self.vae.to('cpu', non_blocking=True)
         return self
 
     def update_config(self, **kwargs):
