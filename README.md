@@ -58,7 +58,7 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
   - [🛠️ Dependencies and Installation](#️-dependencies-and-installation)
   - [🧱 Download Pretrained Models](#-download-pretrained-models)
   - [🔑 Usage](#-usage)
-  - [🎉 Community Support](#-community-support)
+  - [🎉 Community](#-community)
   - [🔗 BibTeX](#-bibtex)
   - [Acknowledgements](#acknowledgements)
   - [Github Star History](#github-star-history)
@@ -247,11 +247,9 @@ image = pipe(
 image.save(f"generated_image.png")
 ```
 
-## 🎉 Community Support
+## 🎉 Community
 
-### cache-dit  
-
-[cache-dit](https://github.com/vipshop/cache-dit)(Day 1) offers Fully Cache Acceleration support for HunyuanImage-2.1 with DBCache and TaylorSeer. Visit their [example](https://github.com/vipshop/cache-dit/blob/main/examples/pipeline/run_hunyuan_image_2.1.py) for more details.
+- [cache-dit](https://github.com/vipshop/cache-dit)(Day 1) offers Fully Cache Acceleration support for HunyuanImage-2.1 with DBCache and TaylorSeer. Visit their [example](https://github.com/vipshop/cache-dit/blob/main/examples/pipeline/run_hunyuan_image_2.1.py) for more details.
 
 
 ## 🔗 BibTeX
