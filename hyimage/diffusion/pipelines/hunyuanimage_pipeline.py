@@ -340,17 +340,14 @@ class HunyuanImagePipeline:
 
         try:
             text_prompt_texts = []
-            pattern_quote_single = r'\'(.*?)\''
             pattern_quote_double = r'\"(.*?)\"'
             pattern_quote_chinese_single = r'‘(.*?)’'
             pattern_quote_chinese_double = r'“(.*?)”'
 
-            matches_quote_single = re.findall(pattern_quote_single, prompt)
             matches_quote_double = re.findall(pattern_quote_double, prompt)
             matches_quote_chinese_single = re.findall(pattern_quote_chinese_single, prompt)
             matches_quote_chinese_double = re.findall(pattern_quote_chinese_double, prompt)
 
-            text_prompt_texts.extend(matches_quote_single)
             text_prompt_texts.extend(matches_quote_double)
             text_prompt_texts.extend(matches_quote_chinese_single)
             text_prompt_texts.extend(matches_quote_chinese_double)
