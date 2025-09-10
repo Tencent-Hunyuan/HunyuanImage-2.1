@@ -16,6 +16,10 @@
 </div>
 
 
+<p align="center">
+    👋 加入我们的 <a href="assets/WECHAT.md" target="_blank">WeChat</a>
+</p>
+
 ----
 
 

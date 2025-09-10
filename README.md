@@ -22,6 +22,9 @@
   <a href=https://x.com/TencentHunyuan target="_blank"><img src=https://img.shields.io/badge/Hunyuan-black.svg?logo=x height=22px></a>
 </div>
 
+<p align="center">
+    👋 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> 
+</p>
 
 -----
 
