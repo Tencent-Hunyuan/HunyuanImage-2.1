@@ -820,6 +820,10 @@ class HunyuanImagePipeline:
             self.text_encoder = self.text_encoder.to(device, non_blocking=True)
         if self.vae is not None:
             self.vae = self.vae.to(device, non_blocking=True)
+        if self.use_byt5 and self.byt5_kwargs is not None:
+            self.byt5_kwargs['byt5_model'] = self.byt5_kwargs['byt5_model'].to(
+                device, non_blocking=True
+            )
         return self
 
     def update_config(self, **kwargs):
