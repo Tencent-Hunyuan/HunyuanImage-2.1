@@ -188,7 +188,8 @@ From the results, HunyuanImage 2.1 achieved a relative win rate of -1.36% agains
 
 **Hardware and OS Requirements:**
 - NVIDIA GPU with CUDA support.
-  - **Minimum requrement for now:** 36 GB GPU memory for 2048x2048 image generation.
+
+  **Minimum requrement for now:** 36 GB GPU memory for 2048x2048 image generation.
   
   > ✨ An FP8-quantized model is coming soon, enabling even lower GPU memory requirements for inference, stay tuned 👀!
   
