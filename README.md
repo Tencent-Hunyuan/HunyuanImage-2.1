@@ -16,8 +16,9 @@
   <a href="https://huggingface.co/spaces/tencent/HunyuanImage-2.1" target="_blank">
     <img src="https://img.shields.io/badge/Demo%20Page-blue" height="22px"></a>
   <a href=https://huggingface.co/tencent/HunyuanImage-2.1 target="_blank"><img src=https://img.shields.io/badge/%F0%9F%A4%97%20Models-d96902.svg height=22px></a>
-  <a href="#" target="_blank"><img src="https://img.shields.io/badge/Report-Coming%20Soon-blue" height="22px"></a>
-  <a href= https://hunyuan-promptenhancer.github.io/ target="_blank"><img src=https://img.shields.io/badge/PromptEnhancer-bb8a2e.svg?logo=github height=22px></a>
+  <a href="#" target="_blank"><img src="https://img.shields.io/badge/Report-Coming%20Soon-blue" height="22px"></a><br/>
+  <a href="https://www.arxiv.org/abs/2509.04545" target="https://arxiv.org/abs/2509.04545"><img src="https://img.shields.io/badge/PromptEnhancer-Report-yellow" height="22px"></a>
+  <a href= https://hunyuan-promptenhancer.github.io/ target="_blank"><img src=https://img.shields.io/badge/PromptEnhancer-bb8a2e.svg?logo=github height=22px></a><br/>
   <a href=https://x.com/TencentHunyuan target="_blank"><img src=https://img.shields.io/badge/Hunyuan-black.svg?logo=x height=22px></a>
 </div>
 
