@@ -89,7 +89,7 @@ class RePrompt:
             )
             if self.model.device != torch.device('meta'):
                 tokenized_chat = tokenized_chat.to(self.model.device)
-            outputs = self.model.generate(tokenized_chat, max_new_tokens=2048, temperature=0.0, do_sample=False, top_k=5, top_p=0.9)
+            outputs = self.model.generate(tokenized_chat, max_new_tokens=2048)
             if self.enable_offloading:
                 self.offload_hook.offload()
             output_res = self.tokenizer.decode(outputs[0])

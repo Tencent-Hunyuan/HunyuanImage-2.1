@@ -693,6 +693,7 @@ class HunyuanImagePipeline:
         """
         if seed is not None:
             generator = torch.Generator(device='cpu').manual_seed(seed)
+            torch.manual_seed(seed)
         else:
             generator = None
 
