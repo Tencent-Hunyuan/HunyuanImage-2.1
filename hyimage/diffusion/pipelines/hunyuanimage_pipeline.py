@@ -60,7 +60,7 @@ class HunyuanImagePipelineConfig:
     version: str = ""
 
     @classmethod
-    def create_default(cls, version: str = "v2.1", use_distilled: bool = False, **kwargs):
+    def create_default(cls, version: str = "v2.1", use_distilled: bool = False, use_compile: bool = True, **kwargs):
         """
         Create a default configuration for specified HunyuanImage version.
 
@@ -76,7 +76,11 @@ class HunyuanImagePipelineConfig:
                 HUNYUANIMAGE_V2_1_VAE_32x,
                 HUNYUANIMAGE_V2_1_TEXT_ENCODER,
             )
-            dit_config = HUNYUANIMAGE_V2_1_DIT_CFG_DISTILL() if use_distilled else HUNYUANIMAGE_V2_1_DIT()
+            dit_config = (
+                HUNYUANIMAGE_V2_1_DIT_CFG_DISTILL(use_compile=use_compile) 
+                if use_distilled else 
+                HUNYUANIMAGE_V2_1_DIT(use_compile=use_compile)
+            )
             return cls(
                 dit_config=dit_config,
                 vae_config=HUNYUANIMAGE_V2_1_VAE_32x(),
@@ -849,6 +853,10 @@ class HunyuanImagePipeline:
                 self.text_encoder = self.text_encoder.to(device, non_blocking=True)
         if self.vae is not None:
             self.vae = self.vae.to(device, non_blocking=True)
+        if self.use_byt5 and self.byt5_kwargs is not None:
+            self.byt5_kwargs['byt5_model'] = self.byt5_kwargs['byt5_model'].to(
+                device, non_blocking=True
+            )
         return self
     
     def offload(self):
