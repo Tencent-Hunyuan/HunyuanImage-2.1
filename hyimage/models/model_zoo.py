@@ -66,7 +66,9 @@ def HUNYUANIMAGE_V2_1_DIT(**kwargs):
         use_cpu_offload=False,
         gradient_checkpointing=True,
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1.safetensors",
-        use_compile=True,
+        fp8_scale=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1_fp8_scale.safetensors",
+        fp8_load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1_fp8.safetensors",
+        use_compile=False,
     )
 
 
@@ -77,8 +79,11 @@ def HUNYUANIMAGE_V2_1_DIT_CFG_DISTILL(**kwargs):
         use_cpu_offload=False,
         gradient_checkpointing=True,
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1-distilled.safetensors",
-        use_compile=True,
+        fp8_scale=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1-distilled_fp8_scale.safetensors",
+        fp8_load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage2.1-distilled_fp8.safetensors",
+        use_compile=False,
     )
+
 
 # =============================================================================
 # REFINER MODELS
@@ -91,8 +96,11 @@ def HUNYUANIMAGE_REFINER_DIT(**kwargs):
         use_cpu_offload=False,
         gradient_checkpointing=True,
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage-refiner.safetensors",
-        use_compile=True,
+        fp8_scale=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage-refiner_fp8_scale.safetensors",
+        fp8_load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/dit/hunyuanimage-refiner_fp8.safetensors",
+        use_compile=False,
     )
+
 
 def HUNYUANIMAGE_REFINER_VAE_16x(**kwargs):
     return VAEConfig(

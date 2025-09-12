@@ -11,6 +11,8 @@ class DiTConfig:
     use_cpu_offload: bool = False
     gradient_checkpointing: bool = False
     load_from: Optional[str] = None
+    fp8_scale: Optional[str] = None
+    fp8_load_from: Optional[str] = None
     use_compile: bool = False
 
 

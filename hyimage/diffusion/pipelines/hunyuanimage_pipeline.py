@@ -4,6 +4,7 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 from einops import rearrange
+from pathlib import Path
 
 from tqdm import tqdm
 import loguru
@@ -46,6 +47,8 @@ class HunyuanImagePipelineConfig:
     enable_vae_offloading: bool = True # offload vae after finishing
     enable_byt5_offloading: bool = True # offload byt5 after finishing
 
+    use_fp8: bool = False
+
     cfg_mode: str = "MIX_mode_0"
     guidance_rescale: float = 0.0
 
@@ -56,7 +59,7 @@ class HunyuanImagePipelineConfig:
     # Inference shift
     shift: int = 5
     torch_dtype: str = "bf16"
-    device: str = "cuda"
+    device: str = "cpu"
     version: str = ""
 
     @classmethod
@@ -121,7 +124,7 @@ class HunyuanImagePipeline:
         self.shift = config.shift
         self.torch_dtype = PRECISION_TO_TYPE[config.torch_dtype]
         self.device = config.device
-        self.execution_device = config.device
+        self.execution_device = 'cuda'
 
         self.dit = None
         self.text_encoder = None
@@ -156,7 +159,7 @@ class HunyuanImagePipeline:
 
     def _load_dit(self):
         dit_device = None
-        if self.config.enable_full_dit_offloading:
+        if self.config.enable_full_dit_offloading or self.config.use_fp8:
             dit_device = 'cpu'
         else:
             dit_device = self.device
@@ -164,11 +167,21 @@ class HunyuanImagePipeline:
         try:
             dit_config = self.config.dit_config
             self.dit = instantiate(dit_config.model, dtype=self.torch_dtype, device=dit_device)
-            if dit_config.load_from:
-                load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
+            if self.config.use_fp8:
+                from hyimage.models.utils.fp8_quantization import convert_fp8_linear
+                if not Path(dit_config.fp8_scale).exists():
+                    raise FileNotFoundError(f"FP8 scale file not found: {dit_config.fp8_scale}. Please download from https://huggingface.co/tencent/HunyuanImage-2.1/")
+                if dit_config.fp8_load_from is not None and Path(dit_config.fp8_load_from).exists():
+                    convert_fp8_linear(self.dit, dit_config.fp8_scale)
+                    load_hunyuan_dit_state_dict(self.dit, dit_config.fp8_load_from, strict=True)
+                else:
+                    loguru.logger.warning(f"FP8 ckpt not found: {dit_config.fp8_load_from}. Fallback to bf16 ckpt load from path: {dit_config.load_from}.")
+                    load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
+                    convert_fp8_linear(self.dit, dit_config.fp8_scale)
+                self.dit = self.dit.to(dit_device)
             else:
-                raise ValueError("Must provide checkpoint path for DiT model")
-            self.dit = self.dit.to(dit_device, dtype=self.torch_dtype)
+                load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
+                self.dit = self.dit.to(dit_device, dtype=self.torch_dtype)
             self.dit.eval()
             if getattr(dit_config, "use_compile", False):
                 self.dit = torch.compile(self.dit)
@@ -243,7 +256,7 @@ class HunyuanImagePipeline:
         from hyimage.diffusion.pipelines.hunyuanimage_refiner_pipeline import HunYuanImageRefinerPipeline
         if self.config.enable_stage1_offloading:
             self.offload()
-        self._refiner_pipeline = HunYuanImageRefinerPipeline.from_pretrained(self.config.refiner_model_name)
+        self._refiner_pipeline = HunYuanImageRefinerPipeline.from_pretrained(self.config.refiner_model_name, use_fp8=self.config.use_fp8)
         return self._refiner_pipeline
 
     @property
@@ -358,56 +371,49 @@ class HunyuanImagePipeline:
 
         if not prompt:
             return (
-                torch.zeros((1, self.byt5_kwargs["byt5_max_length"], 1472), device=self.device),
-                torch.zeros((1, self.byt5_kwargs["byt5_max_length"]), device=self.device, dtype=torch.int64)
+                torch.zeros((1, self.byt5_kwargs["byt5_max_length"], 1472), device=self.execution_device),
+                torch.zeros((1, self.byt5_kwargs["byt5_max_length"]), device=self.execution_device, dtype=torch.int64)
             )
 
-        try:
-            text_prompt_texts = []
-            pattern_quote_double = r'\"(.*?)\"'
-            pattern_quote_chinese_single = r'‘(.*?)’'
-            pattern_quote_chinese_double = r'“(.*?)”'
+        text_prompt_texts = []
+        pattern_quote_double = r'\"(.*?)\"'
+        pattern_quote_chinese_single = r'‘(.*?)’'
+        pattern_quote_chinese_double = r'“(.*?)”'
 
-            matches_quote_double = re.findall(pattern_quote_double, prompt)
-            matches_quote_chinese_single = re.findall(pattern_quote_chinese_single, prompt)
-            matches_quote_chinese_double = re.findall(pattern_quote_chinese_double, prompt)
+        matches_quote_double = re.findall(pattern_quote_double, prompt)
+        matches_quote_chinese_single = re.findall(pattern_quote_chinese_single, prompt)
+        matches_quote_chinese_double = re.findall(pattern_quote_chinese_double, prompt)
 
-            text_prompt_texts.extend(matches_quote_double)
-            text_prompt_texts.extend(matches_quote_chinese_single)
-            text_prompt_texts.extend(matches_quote_chinese_double)
+        text_prompt_texts.extend(matches_quote_double)
+        text_prompt_texts.extend(matches_quote_chinese_single)
+        text_prompt_texts.extend(matches_quote_chinese_double)
 
-            if not text_prompt_texts:
-                self.ocr_mask = [False]
-                return (
-                    torch.zeros((1, self.byt5_kwargs["byt5_max_length"], 1472), device=self.device),
-                    torch.zeros((1, self.byt5_kwargs["byt5_max_length"]), device=self.device, dtype=torch.int64)
-                )
-            self.ocr_mask = [True]
-
-            text_prompt_style_list = [{'color': None, 'font-family': None} for _ in range(len(text_prompt_texts))]
-            glyph_text_formatted = self.prompt_format.format_prompt(text_prompt_texts, text_prompt_style_list)
-
-            byt5_text_ids, byt5_text_mask = self._get_byt5_text_tokens(
-                self.byt5_kwargs["byt5_tokenizer"],
-                self.byt5_kwargs["byt5_max_length"],
-                glyph_text_formatted
-            )
-
-            byt5_text_ids = byt5_text_ids.to(device=self.device)
-            byt5_text_mask = byt5_text_mask.to(device=self.device)
-
-            byt5_prompt_embeds = self.byt5_kwargs["byt5_model"](
-                byt5_text_ids, attention_mask=byt5_text_mask.float()
-            )
-            byt5_emb = byt5_prompt_embeds[0]
-
-            return byt5_emb, byt5_text_mask
-        except Exception as e:
-            loguru.logger.warning(f"Warning: Error in glyph encoding, using fallback: {e}")
+        if not text_prompt_texts:
+            self.ocr_mask = [False]
             return (
-                torch.zeros((1, self.byt5_kwargs["byt5_max_length"], 1472), device=self.device),
-                torch.zeros((1, self.byt5_kwargs["byt5_max_length"]), device=self.device, dtype=torch.int64)
+                torch.zeros((1, self.byt5_kwargs["byt5_max_length"], 1472), device=self.execution_device),
+                torch.zeros((1, self.byt5_kwargs["byt5_max_length"]), device=self.execution_device, dtype=torch.int64)
             )
+        self.ocr_mask = [True]
+
+        text_prompt_style_list = [{'color': None, 'font-family': None} for _ in range(len(text_prompt_texts))]
+        glyph_text_formatted = self.prompt_format.format_prompt(text_prompt_texts, text_prompt_style_list)
+
+        byt5_text_ids, byt5_text_mask = self._get_byt5_text_tokens(
+            self.byt5_kwargs["byt5_tokenizer"],
+            self.byt5_kwargs["byt5_max_length"],
+            glyph_text_formatted
+        )
+
+        byt5_text_ids = byt5_text_ids.to(device=self.execution_device)
+        byt5_text_mask = byt5_text_mask.to(device=self.execution_device)
+
+        byt5_prompt_embeds = self.byt5_kwargs["byt5_model"](
+            byt5_text_ids, attention_mask=byt5_text_mask.float()
+        )
+        byt5_emb = byt5_prompt_embeds[0]
+
+        return byt5_emb, byt5_text_mask
 
     def _get_byt5_text_tokens(self, tokenizer, max_length, text_list):
         """
@@ -474,7 +480,7 @@ class HunyuanImagePipeline:
             device=generator.device,
             dtype=self.torch_dtype,
             generator=generator,
-        ).to(device=self.device)
+        ).to(device=self.execution_device)
 
         return latents
 
@@ -653,7 +659,7 @@ class HunyuanImagePipeline:
         sigmas = torch.linspace(1, 0, sampling_steps + 1)
         sigmas = (shift * sigmas) / (1 + (shift - 1) * sigmas)
         sigmas = sigmas.to(torch.float32)
-        timesteps = (sigmas[:-1] * 1000).to(dtype=torch.float32, device=self.device)
+        timesteps = (sigmas[:-1] * 1000).to(dtype=torch.float32, device=self.execution_device)
         return timesteps, sigmas
 
     def step(self, latents, noise_pred, sigmas, step_i):
@@ -663,7 +669,7 @@ class HunyuanImagePipeline:
     def __call__(
         self,
         prompt: str,
-        shift: int = 4,
+        shift: int = 5,
         negative_prompt: str = "",
         width: int = 2048,
         height: int = 2048,
@@ -720,7 +726,7 @@ class HunyuanImagePipeline:
         print(f"Guidance Scale:   {guidance_scale}")
         print(f"CFG Mode:         {self.cfg_mode}")
         print(f"Guidance Rescale: {self.guidance_rescale}")
-        print(f"Shift:            {self.shift}")
+        print(f"Shift:            {shift}")
         print(f"Seed:             {seed}")
         print(f"Use MeanFlow:     {self.use_meanflow}")
         print(f"Use byT5:         {self.use_byt5}")
@@ -768,7 +774,7 @@ class HunyuanImagePipeline:
             t_expand = t.repeat(latent_model_input.shape[0])
             if self.use_meanflow:
                 if i == len(timesteps) - 1:
-                    timesteps_r = torch.tensor([0.0], device=self.device)
+                    timesteps_r = torch.tensor([0.0], device=self.execution_device)
                 else:
                     timesteps_r = timesteps[i + 1]
                 timesteps_r = timesteps_r.repeat(latent_model_input.shape[0])

@@ -170,7 +170,7 @@ class HunYuanImageRefinerPipeline(HunyuanImagePipeline):
         with torch.no_grad():
             self.vae.to(self.execution_device)
             cond_latents = self.vae.encode(
-                image_tensor.to(self.device, dtype=self.vae.dtype)
+                image_tensor.to(self.execution_device, dtype=self.vae.dtype)
             ).latent_dist.sample()
             if self.config.enable_vae_offloading:
                 self.vae.to('cpu')

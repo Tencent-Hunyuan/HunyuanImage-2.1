@@ -27,7 +27,7 @@
 
 
 ## 🔥🔥🔥 最新动态
-
+- 2025 年 9 月 12 日：🚀 发布 FP8 量化模型！仅需 24GB GPU 显存即可生成 2K 图像！
 - 2025 年 9 月 8 日：🚀 发布混元图像 2.1 的推理代码与模型权重。
 
 ## 🎥 示例
@@ -177,11 +177,9 @@ SSAE（结构化语义对齐评估）是一种基于先进多模态大语言模�
 **硬件和操作系统要求：**
 - 支持 CUDA 的 NVIDIA GPU。
 
-  **最低要求：** 36 GB 显存，可用于 2048x2048 图像生成。
+  **最低要求：** 24 GB 显存，可用于 2048x2048 图像生成。
 
-  > ✨ 即将推出 FP8 量化模型，推理所需显存将进一步降低，敬请期待 👀！
-
-  > **注意：** 上述内存要求是在启用模型 CPU offloading 的情况下测量的。如果您的 GPU 有足够的显存，可以禁用 CPU offloading 以提高推理速度。
+  > **注意：** 上述内存要求是在启用模型 CPU offloading 和 FP8 量化的情况下测量的。如果您的 GPU 有足够的显存，可以禁用 CPU offloading 以提高推理速度。
 
 - 支持的操作系统：Linux。
 
@@ -217,7 +215,7 @@ from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeli
 
 # 支持的 model_name：hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
 model_name = "hunyuanimage-v2.1"
-pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, torch_dtype='bf16')
+pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
 pipe = pipe.to("cuda")
 
 prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
@@ -232,7 +230,7 @@ image = pipe(
     # 建议使用上述长宽组合以获得最佳效果。
     width=2048,
     height=2048,
-    use_reprompt=True,  # 启用提示词增强
+    use_reprompt=False,  # 启用提示词增强
     use_refiner=True,   # 启用精修模型, 以获得更高画质
     # 对于蒸馏版模型，建议使用 8 步以加快推理速度
     # 对于非蒸馏版模型，建议使用 50 步以获得更高画质

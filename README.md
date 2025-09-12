@@ -33,7 +33,9 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
 
 ## 🔥🔥🔥 Latest Updates
 
+- September 12, 2025: 🚀 Released FP8 quantized models! Making it possible to generate 2K images with only 24GB GPU memory!
 - September 8, 2025: 🚀 Released inference code and model weights for HunyuanImage-2.1.
+
 
 ## 🎥 Demo
 
@@ -189,11 +191,9 @@ From the results, HunyuanImage 2.1 achieved a relative win rate of -1.36% agains
 **Hardware and OS Requirements:**
 - NVIDIA GPU with CUDA support.
 
-  **Minimum requrement for now:** 36 GB GPU memory for 2048x2048 image generation.
+  **Minimum requrement for now:** 24 GB GPU memory for 2048x2048 image generation.
   
-  > ✨ FP8-quantized models are coming soon, enabling even lower GPU memory requirements for inference, stay tuned 👀!
-  
-  > **Note:** The memory requirements above are measured with model CPU offloading enabled. If your GPU has sufficient memory, you may disable offloading for improved inference speed.
+  > **Note:** The memory requirements above are measured with model CPU offloading and FP8 quantization enabled. If your GPU has sufficient memory, you may disable offloading for improved inference speed.
 - Supported operating system: Linux.
 
 
@@ -226,7 +226,7 @@ from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeli
 
 # Supported model_name: hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
 model_name = "hunyuanimage-v2.1"
-pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, torch_dtype='bf16')
+pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
 pipe = pipe.to("cuda")
 
 prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
@@ -241,7 +241,7 @@ image = pipe(
     # Please use one of the above width/height pairs for best results.
     width=2048,
     height=2048,
-    use_reprompt=True,  # Enable prompt enhancement
+    use_reprompt=False,  # Enable prompt enhancement
     use_refiner=True,   # Enable refiner model
     # For the distilled model, use 8 steps for faster inference.
     # For the non-distilled model, use 50 steps for better quality.
