@@ -608,8 +608,6 @@ class HunyuanImagePipeline:
                     guidance_rescale=self.guidance_rescale,
                 )
 
-
-        noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_text - noise_pred_uncond)
         return noise_pred
 
     def _decode_latents(self, latents, reorg_tokens=False):
