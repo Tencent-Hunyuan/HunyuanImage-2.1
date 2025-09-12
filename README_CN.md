@@ -230,7 +230,7 @@ image = pipe(
     # 建议使用上述长宽组合以获得最佳效果。
     width=2048,
     height=2048,
-    use_reprompt=False,  # 启用提示词增强
+    use_reprompt=False,  # 启用提示词增强 (可能会导致更高的显存使用)
     use_refiner=True,   # 启用精修模型, 以获得更高画质
     # 对于蒸馏版模型，建议使用 8 步以加快推理速度
     # 对于非蒸馏版模型，建议使用 50 步以获得更高画质

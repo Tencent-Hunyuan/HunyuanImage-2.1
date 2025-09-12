@@ -241,7 +241,7 @@ image = pipe(
     # Please use one of the above width/height pairs for best results.
     width=2048,
     height=2048,
-    use_reprompt=False,  # Enable prompt enhancement
+    use_reprompt=False,  # Enable prompt enhancement (which may result in higher GPU memory usage)
     use_refiner=True,   # Enable refiner model
     # For the distilled model, use 8 steps for faster inference.
     # For the non-distilled model, use 50 steps for better quality.
