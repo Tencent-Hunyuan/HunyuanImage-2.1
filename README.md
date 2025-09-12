@@ -221,6 +221,8 @@ Generating images with 1K resolution will result in artifacts.
 Additionally, we recommend using the full generation pipeline for better quality (i.e. enabling prompt enhancement and refinment).
 
 ```python
+import os
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import torch
 from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeline
 

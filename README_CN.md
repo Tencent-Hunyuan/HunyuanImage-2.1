@@ -210,6 +210,8 @@ HunyuanImage-2.1 仅支持 2K 分辨率图像生成（如 1:1 时为 2048x2048�
 
 
 ```python
+import os
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import torch
 from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeline
 
