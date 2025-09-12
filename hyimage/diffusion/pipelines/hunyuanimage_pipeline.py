@@ -54,7 +54,7 @@ class HunyuanImagePipelineConfig:
     # Default guidance scale, will be overridden by the guidance_scale parameter in __call__
     default_guidance_scale: float = 3.5
     # Inference shift
-    shift: int = 4
+    shift: int = 5
     torch_dtype: str = "bf16"
     device: str = "cuda"
     version: str = ""
@@ -82,6 +82,9 @@ class HunyuanImagePipelineConfig:
                 vae_config=HUNYUANIMAGE_V2_1_VAE_32x(),
                 text_encoder_config=HUNYUANIMAGE_V2_1_TEXT_ENCODER(),
                 reprompt_config=HUNYUANIMAGE_REPROMPT(),
+                shift=4 if use_distilled else 5,
+                default_guidance_scale=3.25 if use_distilled else 3.5,
+                default_sampling_steps=8 if use_distilled else 50,
                 version=version,
                 **kwargs
             )
