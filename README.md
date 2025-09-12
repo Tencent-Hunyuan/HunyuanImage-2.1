@@ -246,8 +246,8 @@ image = pipe(
     # For the distilled model, use 8 steps for faster inference.
     # For the non-distilled model, use 50 steps for better quality.
     num_inference_steps=8 if "distilled" in model_name else 50, 
-    guidance_scale=3.5,
-    shift=5,
+    guidance_scale=3.25 if "distilled" in model_name else 3.5,
+    shift=4 if "distilled" in model_name else 5,
     seed=649151,
 )
 

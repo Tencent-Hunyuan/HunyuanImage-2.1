@@ -237,8 +237,8 @@ image = pipe(
     # 对于蒸馏版模型，建议使用 8 步以加快推理速度
     # 对于非蒸馏版模型，建议使用 50 步以获得更高画质
     num_inference_steps=8 if "distilled" in model_name else 50, 
-    guidance_scale=3.5,
-    shift=5,
+    guidance_scale=3.25 if "distilled" in model_name else 3.5,
+    shift=4 if "distilled" in model_name else 5,
     seed=649151,
 )
 
