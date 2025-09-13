@@ -121,7 +121,7 @@
 ## 提示词增强示例
 为了提升生成图像的质量和细节，我们引入了提示词增强模型。该模型能够自动丰富用户提供的文本提示，添加丰富的描述性细节。
 <p align="center">
-  <img src="./assets/reprompt.png" width=100% alt="Human Evaluation with Other Models">
+  <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
 </p>
 
 

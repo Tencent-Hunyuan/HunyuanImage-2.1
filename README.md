@@ -136,7 +136,7 @@ We propose a novel distillation method based on meanflow that addresses the key 
 ## Prompt Enhanced Demo
 To improve the quality and detail of generated images, we use a prompt rewriting model. This model automatically enhances user-provided text prompts by adding detailed and descriptive information.
 <p align="center">
-  <img src="./assets/reprompt.png" width=100% alt="Human Evaluation with Other Models">
+  <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
 </p>
 
 
