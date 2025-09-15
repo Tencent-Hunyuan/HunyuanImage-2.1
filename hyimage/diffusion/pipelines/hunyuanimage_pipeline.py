@@ -175,7 +175,7 @@ class HunyuanImagePipeline:
                     convert_fp8_linear(self.dit, dit_config.fp8_scale)
                     load_hunyuan_dit_state_dict(self.dit, dit_config.fp8_load_from, strict=True)
                 else:
-                    loguru.logger.warning(f"FP8 ckpt not found: {dit_config.fp8_load_from}. Fallback to bf16 ckpt load from path: {dit_config.load_from}.")
+                    raise FileNotFoundError(f"FP8 ckpt not found: {dit_config.fp8_load_from}. Please download from https://huggingface.co/tencent/HunyuanImage-2.1/")
                     load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
                     convert_fp8_linear(self.dit, dit_config.fp8_scale)
                 self.dit = self.dit.to(dit_device)
@@ -819,6 +819,7 @@ class HunyuanImagePipeline:
                 num_inference_steps=4,
                 guidance_scale=guidance_scale,
                 generator=generator,
+                seed=seed,
             )
             if self.config.enable_refiner_offloading:
                 self.refiner_pipeline.offload()
