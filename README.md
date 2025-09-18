@@ -11,7 +11,13 @@
 
 </div>
 
-<div align="center">
+
+<p align="center"> &nbsp&nbsp🤗 <a href="https://huggingface.co/tencent/HunyuanImage-2.1">HuggingFace</a>&nbsp&nbsp | 
+💻 <a href="https://hunyuan.woa.com/modelSquare/home/play?modelId=286&from=/visual">Official website(官网) Try our model!</a>&nbsp&nbsp
+</p>
+
+
+<!-- <div align="center">
   <a href=https://github.com/Tencent-Hunyuan/HunyuanImage-2.1 target="_blank"><img src=https://img.shields.io/badge/Code-black.svg?logo=github height=22px></a>
   <a href="https://huggingface.co/spaces/tencent/HunyuanImage-2.1" target="_blank">
     <img src="https://img.shields.io/badge/Demo%20Page-blue" height="22px"></a>
@@ -20,7 +26,7 @@
   <a href="https://www.arxiv.org/abs/2509.04545" target="https://arxiv.org/abs/2509.04545"><img src="https://img.shields.io/badge/PromptEnhancer-Report-yellow" height="22px"></a>
   <a href= https://hunyuan-promptenhancer.github.io/ target="_blank"><img src=https://img.shields.io/badge/PromptEnhancer-bb8a2e.svg?logo=github height=22px></a><br/>
   <a href=https://x.com/TencentHunyuan target="_blank"><img src=https://img.shields.io/badge/Hunyuan-black.svg?logo=x height=22px></a>
-</div>
+</div> -->
 
 <p align="center">
     👋 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> 
@@ -28,7 +34,7 @@
 
 -----
 
-This repo contains PyTorch model definitions, pretrained weights and inference/sampling code for our HunyuanImage-2.1. You can find more visualizations on our [project page](https://hunyuan.tencent.com/image/en?tabIndex=0).
+This repo contains PyTorch model definitions, pretrained weights and inference/sampling code for our HunyuanImage-2.1. You can <span style="color:red">**directly try our model**</span> on [Official website(官网)](https://hunyuan.woa.com/modelSquare/home/play?modelId=286&from=/visual) and find more visualizations on our [project page](https://hunyuan.tencent.com/image/en?tabIndex=0).
 
 
 ## 🔥🔥🔥 Latest Updates
@@ -42,7 +48,7 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
 ## 🎥 Demo
 
 <div align="center">
-  <img src="./assets/show_cases.png" width=100% alt="HunyuanImage 2.1 Demo">
+  <img src="./assets/demo.jpg" width=100% alt="HunyuanImage 2.1 Demo">
 </div>
 
 ## Contents
