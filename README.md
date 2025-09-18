@@ -32,10 +32,15 @@
     👋 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> 
 </p>
 
+
 -----
 
 This repo contains PyTorch model definitions, pretrained weights and inference/sampling code for our HunyuanImage-2.1. You can <span style="color:red">**directly try our model**</span> on [Official website(官网)](https://hunyuan.woa.com/modelSquare/home/play?modelId=286&from=/visual) and find more visualizations on our [project page](https://hunyuan.tencent.com/image/en?tabIndex=0).
 
+
+<div align="center">
+  <img src="./assets/demo.jpg" width=100% alt="HunyuanImage 2.1 Demo">
+</div>
 
 ## 🔥🔥🔥 Latest Updates
 - September 18, 2025: ✨ Try the [PromptEnhancer-32B model](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) for higher-quality prompt enhancement!​.
@@ -45,13 +50,13 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
 - September 8, 2025: 🚀 Released inference code and model weights for HunyuanImage-2.1.
 
 
-## 🎥 Demo
+<!-- ## 🎥 Demo
 
 <div align="center">
   <img src="./assets/demo.jpg" width=100% alt="HunyuanImage 2.1 Demo">
-</div>
+</div> -->
 
-## Contents
+<!-- ## Contents
 - [HunyuanImage-2.1: An Efficient Diffusion Model for High-Resolution (2K) Text-to-Image Generation​](#hunyuanimage-21-an-efficient-diffusion-model-for-high-resolution-2k-text-to-image-generation)
   - [🔥🔥🔥 Latest Updates](#-latest-updates)
   - [🎥 Demo](#-demo)
@@ -76,20 +81,26 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
   - [Acknowledgements](#acknowledgements)
   - [Github Star History](#github-star-history)
 
----
+--- -->
 <!-- - [🧩 Community Contributions](#-community-contributions) -->
-## Abstract
-We present HunyuanImage-2.1, a highly efficient text-to-image model that is capable of generating 2K (2048 × 2048) resolution images. Leveraging an extensive dataset and structured captions involving multiple expert models, we significantly enhance text-image alignment capabilities. The model employs a highly expressive VAE with a (32 × 32) spatial compression ratio, substantially reducing computational costs.
+## Introduction
+We are excited to introduce **HunyuanImage-2.1**, a 17B text-to-image model that is capable of generating **2K (2048 × 2048) resolution** images. 
+
+<!-- Leveraging an extensive dataset and structured captions involving multiple expert models, we significantly enhance text-image alignment capabilities. The model employs a highly expressive VAE with a (32 × 32) spatial compression ratio, substantially reducing computational costs. -->
 
 Our architecture consists of two stages:
-1. ​Base text-to-image Model:​​ The first stage is a text-to-image model that utilizes two text encoders: a multimodal large language model (MLLM) to improve image-text alignment, and a multi-language, character-aware encoder to enhance text rendering across various languages. This stage features a single- and dual-stream diffusion transformer with 17 billion parameters. To optimize aesthetics and structural coherence, we apply reinforcement learning from human feedback (RLHF).
-2. Refiner Model: The second stage introduces a refiner model that further enhances image quality and clarity, while minimizing artifacts. 
+1. **​Base text-to-image Model**:​​ The first stage is a text-to-image model that utilizes two text encoders: a multimodal large language model (MLLM) to improve image-text alignment, and a multi-language, character-aware encoder to enhance text rendering across various languages. 
+2. **Refiner Model**: The second stage introduces a refiner model that further enhances image quality and clarity, while minimizing artifacts. 
+<!-- 
+Additionally, we developed the PromptEnhancer module to further boost model performance, and employed meanflow distillation for efficient inference. HunyuanImage-2.1 demonstrates robust semantic alignment and cross-scenario generalization, leading to improved consistency between text and image, enhanced control of scene details, character poses, and expressions, and the ability to generate multiple objects with distinct descriptions. -->
 
-Additionally, we developed the PromptEnhancer module to further boost model performance, and employed meanflow distillation for efficient inference. HunyuanImage-2.1 demonstrates robust semantic alignment and cross-scenario generalization, leading to improved consistency between text and image, enhanced control of scene details, character poses, and expressions, and the ability to generate multiple objects with distinct descriptions.
+👑 We achieved the **Top1** on Arena's leaderboard for text-to-image open-source models.
 
-
+<div align="center">
+  <img src="./assets/leaderboard.png" width=70% alt="HunyuanImage 2.1 Demo">
+</div>
  
-
+<!-- 
 ## HunyuanImage-2.1 Overall Pipeline
 
 ### Training Data and Caption
@@ -129,7 +140,7 @@ We propose a novel distillation method based on meanflow that addresses the key 
 
 
 
-
+ -->
 
 ## 🎉 HunyuanImage-2.1 Key Features
 
@@ -141,11 +152,112 @@ We propose a novel distillation method based on meanflow that addresses the key 
 - **Prompt Enhancement**: Automatically rewrites prompts to improve descriptive accuracy and visual quality.
 
 
+
+
+
+
+## 📜 System Requirements
+
+**Hardware and OS Requirements:**
+- NVIDIA GPU with CUDA support.
+
+  **Minimum requrement for now:** 24 GB GPU memory for 2048x2048 image generation.
+  
+  > **Note:** The memory requirements above are measured with model CPU offloading and FP8 quantization enabled. If your GPU has sufficient memory, you may disable offloading for improved inference speed.
+- Supported operating system: Linux.
+
+
+## 🛠️ Dependencies and Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Tencent-Hunyuan/HunyuanImage-2.1.git
+cd HunyuanImage-2.1
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+pip install flash-attn==2.7.3 --no-build-isolation
+```
+
+## 🧱 Download Pretrained Models
+
+The details of download pretrained models are shown [here](ckpts/checkpoints-download.md).
+
+## 🔑 Usage
+
+### Prompt Enhancement
+
+Prompt enhancement plays a **crucial role** in enabling our model to generate high-quality images. By writing longer and more detailed prompts, the generated image will be significantly improved. We encourage you to craft comprehensive and descriptive prompts to achieve the best possible image quality. 
+
+We highly recommend you to try the [PromptEnhancer-32B model](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) for higher-quality prompt enhancement.
+
+
+### Text to Image
+HunyuanImage-2.1 **only supports 2K** image generation (e.g. 2048x2048 for 1:1 images, 2560x1536 for 16:9 images, etc.).
+Generating images with 1K resolution will result in artifacts.
+
+Additionally, we **highly recommend** using the full generation pipeline for better quality (i.e. enabling prompt enhancement and refinment).
+
+
+| model type               | model name                | description                             | num_inference_steps | guidance_scale | shift |
+|--------------------------|---------------------------|-----------------------------------------|---------------------|----------------|-------|
+| Base text-to-image Model | hunyuanimage2.1           | Undistilled model for the best quality. | 50                  | 3.5            | 5     |
+|                          | hunyuanimage2.1-distilled | Distilled model for faster inference    | 8                   | 3.25           | 4     |
+| Refiner                  | hunyuanimage-refiner      | The refiner model                       | N/A                 | N/A            | N/A   |
+
+
+```python
+import os
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+import torch
+from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeline
+
+# Supported model_name: hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
+model_name = "hunyuanimage-v2.1"
+pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
+pipe = pipe.to("cuda")
+
+# The input prompt
+prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
+
+
+# Generate with different aspect ratios
+aspect_ratios = {
+    "16:9": (2560, 1536),
+    "4:3": (2304, 1792),
+    "1:1": (2048, 2048),
+    "3:4": (1792, 2304),
+    "9:16": (1536, 2560),
+}
+
+width, height = aspect_ratios["1:1"]
+
+image = pipe(
+    prompt=prompt,
+    width=width,
+    height=height,
+    # disable the reprompt if you already use the prompt enhancement to enhance the prompt
+    use_reprompt=False,  # Enable prompt enhancement (which may result in higher GPU memory usage)
+    use_refiner=True,   # Enable refiner model
+    # For the distilled model, use 8 steps for faster inference.
+    # For the non-distilled model, use 50 steps for better quality.
+    num_inference_steps=8 if "distilled" in model_name else 50, 
+    guidance_scale=3.25 if "distilled" in model_name else 3.5,
+    shift=4 if "distilled" in model_name else 5,
+    seed=649151,
+)
+
+image.save(f"generated_image.png")
+```
+
 ## Prompt Enhanced Demo
 To improve the quality and detail of generated images, we use a prompt rewriting model. This model automatically enhances user-provided text prompts by adding detailed and descriptive information.
 <p align="center">
   <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
 </p>
+
 
 
 ## 📈 Comparisons
@@ -192,78 +304,6 @@ From the SSAE evaluation results, our model has currently achieved the optimal p
 
 We adopted the GSB evaluation method commonly used to assess the relative performance between two models from an overall image perception perspective. In total, we utilized 1000 text prompts, generating an equal number of image samples for all compared models in a single run. For a fair comparison, we conducted inference only once for each prompt, avoiding any cherry-picking of results. When comparing with the baseline methods, we maintained the default settings for all selected models. The evaluation was performed by more than 100 professional evaluators.
 From the results, HunyuanImage 2.1 achieved a relative win rate of -1.36% against Seedream3.0 (closed-source) and 2.89% outperforming Qwen-Image (open-source). The GSB evaluation results demonstrate that HunyuanImage 2.1, as an open-source model, has reached a level of image generation quality comparable to closed-source commercial models (Seedream3.0), while showing certain advantages in comparison with similar open-source models (Qwen-Image). This fully validates the technical advancement and practical value of HunyuanImage 2.1 in text-to-image generation tasks.
-
-## 📜 System Requirements
-
-
-**Hardware and OS Requirements:**
-- NVIDIA GPU with CUDA support.
-
-  **Minimum requrement for now:** 24 GB GPU memory for 2048x2048 image generation.
-  
-  > **Note:** The memory requirements above are measured with model CPU offloading and FP8 quantization enabled. If your GPU has sufficient memory, you may disable offloading for improved inference speed.
-- Supported operating system: Linux.
-
-
-## 🛠️ Dependencies and Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/Tencent-Hunyuan/HunyuanImage-2.1.git
-cd HunyuanImage-2.1
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-pip install flash-attn==2.7.3 --no-build-isolation
-```
-
-## 🧱 Download Pretrained Models
-
-The details of download pretrained models are shown [here](ckpts/checkpoints-download.md).
-
-## 🔑 Usage
-HunyuanImage-2.1 only supports 2K image generation (e.g. 2048x2048 for 1:1 images, 2560x1536 for 16:9 images, etc.).
-Generating images with 1K resolution will result in artifacts.
-Additionally, we recommend using the full generation pipeline for better quality (i.e. enabling prompt enhancement and refinment).
-
-```python
-import os
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
-import torch
-from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeline
-
-# Supported model_name: hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
-model_name = "hunyuanimage-v2.1"
-pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
-pipe = pipe.to("cuda")
-
-prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
-image = pipe(
-    prompt=prompt,
-    # Examples of supported resolutions and aspect ratios for HunyuanImage-2.1:
-    # 16:9  -> width=2560, height=1536
-    # 4:3   -> width=2304, height=1792
-    # 1:1   -> width=2048, height=2048
-    # 3:4   -> width=1792, height=2304
-    # 9:16  -> width=1536, height=2560
-    # Please use one of the above width/height pairs for best results.
-    width=2048,
-    height=2048,
-    use_reprompt=False,  # Enable prompt enhancement (which may result in higher GPU memory usage)
-    use_refiner=True,   # Enable refiner model
-    # For the distilled model, use 8 steps for faster inference.
-    # For the non-distilled model, use 50 steps for better quality.
-    num_inference_steps=8 if "distilled" in model_name else 50, 
-    guidance_scale=3.25 if "distilled" in model_name else 3.5,
-    shift=4 if "distilled" in model_name else 5,
-    seed=649151,
-)
-
-image.save(f"generated_image.png")
-```
-
 
 ## 🔗 BibTeX
 
