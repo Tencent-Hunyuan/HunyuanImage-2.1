@@ -145,12 +145,12 @@ class HunyuanImagePipeline:
             self.cfg_guider_ocr = AdaptiveProjectedGuidance(guidance_scale=10.0, eta=0.0,
                                                             adaptive_projected_guidance_rescale=10.0,
                                                             adaptive_projected_guidance_momentum=-0.5)
-            self.apg_start_step_ocr = 75
+            self.apg_start_step_ocr = 38
 
             self.cfg_guider_general = AdaptiveProjectedGuidance(guidance_scale=10.0, eta=0.0,
                                                                 adaptive_projected_guidance_rescale=10.0,
                                                                 adaptive_projected_guidance_momentum=-0.5)
-            self.apg_start_step_general = 10
+            self.apg_start_step_general = 5
 
         self.ocr_mask = []
 
@@ -804,6 +804,9 @@ class HunyuanImagePipeline:
             self.vae.to('cpu')
         image = (image.squeeze(0).permute(1, 2, 0) * 255).byte().numpy()
         pil_image = Image.fromarray(image)
+        stats = torch.cuda.memory_stats()
+        peak_bytes_requirement = stats["allocated_bytes.all.peak"]
+        print(f"Before refiner Peak memory requirement: {peak_bytes_requirement / 1024 ** 3:.2f} GB")
 
         if use_refiner:
             if self.config.enable_stage1_offloading:

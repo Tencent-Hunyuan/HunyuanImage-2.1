@@ -33,7 +33,7 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
 
 ## 🔥🔥🔥 Latest Updates
 - September 18, 2025: ✨ Try the [PromptEnhancer !](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B)
-- September 18, 2025: ✨ Released [ComfyUI workflow of HunyuanImage-2.1](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1). 
+- September 18, 2025: ✨ [ComfyUI workflow of HunyuanImage-2.1](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1) is available now! 
 - September 12, 2025: 🚀 Released FP8 quantized models! Making it possible to generate 2K images with only 24GB GPU memory!
 - September 8, 2025: 🚀 Released inference code and model weights for HunyuanImage-2.1.
 
