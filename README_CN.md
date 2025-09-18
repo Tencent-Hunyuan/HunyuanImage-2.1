@@ -27,6 +27,7 @@
 
 
 ## 🔥🔥🔥 最新动态
+- 2025 年 9 月 18 日：✨ 发布 [HunyuanImage-2.1 的 ComfyUI 工作流](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1). 
 - 2025 年 9 月 12 日：🚀 发布 FP8 量化模型！仅需 24GB GPU 显存即可生成 2K 图像！
 - 2025 年 9 月 8 日：🚀 发布混元图像 2.1 的推理代码与模型权重。
 
