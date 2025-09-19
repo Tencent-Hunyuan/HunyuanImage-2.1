@@ -77,6 +77,7 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
   - [🛠️ Dependencies and Installation](#️-dependencies-and-installation)
   - [🧱 Download Pretrained Models](#-download-pretrained-models)
   - [🔑 Usage](#-usage)
+  - [🎉 Community](#-community)
   - [🔗 BibTeX](#-bibtex)
   - [Acknowledgements](#acknowledgements)
   - [Github Star History](#github-star-history)
@@ -308,6 +309,10 @@ From the results, HunyuanImage 2.1 achieved a relative win rate of -1.36% agains
 
 ### Contact
 Feel free to join our Discord server or join our WeChat groups—not only to exchange ideas and explore collaboration, but also to ask any questions you might have. You're welcome to open an issue or submit a pull request on GitHub. Your feedback is valuable to us and helps drive HunyuanImage forward. Thank you for being a part of our community!
+
+## 🎉 Community
+
+- [cache-dit](https://github.com/vipshop/cache-dit)(Day 1) offers Fully Cache Acceleration support for HunyuanImage-2.1 with DBCache and TaylorSeer. Visit their [example](https://github.com/vipshop/cache-dit/blob/main/examples/pipeline/run_hunyuan_image_2.1.py) for more details.
 
 
 ## 🔗 BibTeX
