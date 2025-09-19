@@ -512,6 +512,7 @@ class HunyuanVAE2D(ModelMixin, ConfigMixin):
     def enable_spatial_tiling(self, use_tiling: bool = True):
         """Enable or disable spatial tiling."""
         self.use_spatial_tiling = use_tiling
+        raise NotImplementedError("Spatial tiling will lead to severe reconstruction artifacts with the pretrained VAE checkpoint!")
 
     def disable_spatial_tiling(self):
         """Disable spatial tiling."""
@@ -582,6 +583,7 @@ class HunyuanVAE2D(ModelMixin, ConfigMixin):
         x : torch.Tensor
             Input tensor of shape (B, C, T, H, W).
         """
+        raise NotImplementedError("Spatial tiling will lead to severe reconstruction artifacts with the pretrained VAE checkpoint!")
         B, C, T, H, W = x.shape
         overlap_size = int(self.tile_sample_min_size * (1 - self.tile_overlap_factor))
         blend_extent = int(self.tile_latent_min_size * self.tile_overlap_factor)
@@ -619,6 +621,7 @@ class HunyuanVAE2D(ModelMixin, ConfigMixin):
         z : torch.Tensor
             Latent tensor of shape (B, C, H, W).
         """
+        raise NotImplementedError("Spatial tiling will lead to severe reconstruction artifacts with the pretrained VAE checkpoint!")
         B, C, H, W = z.shape
         overlap_size = int(self.tile_latent_min_size * (1 - self.tile_overlap_factor))
         blend_extent = int(self.tile_sample_min_size * self.tile_overlap_factor)
