@@ -1,19 +1,19 @@
+[English](./README.md)
+
 <p align="center">
   <img src="./assets/logo.png"  height=100>
 </p>
 
+<div align="center">
+
 # 混元图像 2.1：一种用于高分辨率（2K）文本到图像生成的高效扩散模型
 
-<div align="center">
-  <a href=https://github.com/Tencent-Hunyuan/HunyuanImage-2.1 target="_blank"><img src=https://img.shields.io/badge/Code-black.svg?logo=github height=22px></a>
-  <a href="https://huggingface.co/spaces/tencent/HunyuanImage-2.1" target="_blank">
-    <img src="https://img.shields.io/badge/Demo%20Page-blue" height="22px"></a>
-  <a href=https://huggingface.co/tencent/HunyuanImage-2.1 target="_blank"><img src=https://img.shields.io/badge/%F0%9F%A4%97%20Models-d96902.svg height=22px></a>
-  <a href="#" target="_blank"><img src="https://img.shields.io/badge/Report-Coming%20Soon-blue" height="22px"></a><br/>
-  <a href="https://www.arxiv.org/abs/2509.04545" target="https://arxiv.org/abs/2509.04545"><img src="https://img.shields.io/badge/PromptEnhancer-Report-yellow" height="22px"></a>
-  <a href= https://hunyuan-promptenhancer.github.io/ target="_blank"><img src=https://img.shields.io/badge/PromptEnhancer-bb8a2e.svg?logo=github height=22px></a><br/>
-  <a href=https://x.com/TencentHunyuan target="_blank"><img src=https://img.shields.io/badge/Hunyuan-black.svg?logo=x height=22px></a>
 </div>
+
+
+<p align="center"> &nbsp&nbsp🤗 <a href="https://huggingface.co/tencent/HunyuanImage-2.1">HuggingFace</a>&nbsp&nbsp | 
+💻 <a href="https://hunyuan.tencent.com/modelSquare/home/play?modelId=286&from=/visual">官网体验</a>&nbsp&nbsp
+</p>
 
 
 <p align="center">
@@ -23,31 +23,35 @@
 ----
 
 
-本仓库包含我们关于混元图像 2.1 的 PyTorch 模型定义、预训练权重，以及推理/采样代码。更多可视化示例请访问我们的<a href="https://hunyuan.tencent.com/image/en?tabIndex=0">项目主页</a>。
+本仓库包含我们关于混元图像 2.1 的 PyTorch 模型定义、预训练权重，以及推理/采样代码。您可以在[官网](https://hunyuan.tencent.com/modelSquare/home/play?modelId=286&from=/visual)直接体验我们的模型，更多可视化示例请访问我们的[项目主页](https://hunyuan.tencent.com/image/en?tabIndex=0)。
+
+<div align="center">
+  <img src="./assets/demo.jpg" width=100% alt="HunyuanImage 2.1 Demo">
+</div>
 
 
 ## 🔥🔥🔥 最新动态
-- 2025 年 9 月 18 日：✨ 欢迎体验 [PromptEnhancer !](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B)！
-- 2025 年 9 月 18 日：✨ 支持 HunyuanImage-2.1 的 [ComfyUI 工作流](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1) 开放体验！
+- 2025 年 9 月 18 日：✨ 欢迎体验 [PromptEnhancer-32B 模型](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) 以获得更高质量的提示词增强！
+- 2025 年 9 月 18 日：✨ [HunyuanImage-2.1 的 ComfyUI 工作流](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1) 现已开放体验！
+- 2025 年 9 月 16 日：👑 我们在 Arena 文生图开源模型排行榜上获得第一名！[排行榜](https://artificialanalysis.ai/text-to-image/arena/leaderboard-text)
 - 2025 年 9 月 12 日：🚀 发布 FP8 量化模型！仅需 24GB GPU 显存即可生成 2K 图像！
 - 2025 年 9 月 8 日：🚀 发布混元图像 2.1 的推理代码与模型权重。
 
-## 🎥 示例
+<!-- ## 🎥 示例
 
 <div align="center">
   <img src="./assets/show_cases.png" width=100% alt="HunyuanImage 2.1 Demo">
-</div>
+</div> -->
 
 
 ## 目录
 - [混元图像 2.1：一种用于高分辨率（2K）文本到图像生成的高效扩散模型](#混元图像-21一种用于高分辨率2k文本到图像生成的高效扩散模型)
   - [🔥🔥🔥 最新动态](#-最新动态)
-  - [🎥 示例](#-示例)
   - [目录](#目录)
   - [摘要](#摘要)
   - [混元图像 2.1 整体流程](#混元图像-21-整体流程)
     - [训练数据和标注](#训练数据和标注)
-    - [文本到图像模型架构](#文本到图像模型架构)
+    - [文生图模型架构](#文生图模型架构)
     - [人类反馈强化学习](#人类反馈强化学习)
     - [改写模型](#改写模型)
     - [模型蒸馏](#模型蒸馏)
@@ -60,6 +64,8 @@
   - [🛠️ 依赖与安装](#️-依赖与安装)
   - [🧱 模型下载](#-模型下载)
   - [🔑 使用](#-使用)
+    - [提示词增强](#提示词增强)
+    - [文生图](#文生图)
   - [🔗 BibTeX](#-bibtex)
   - [致谢](#致谢)
   - [Github Star 历史](#github-star-历史)
@@ -68,13 +74,19 @@
 
 ## 摘要
 
-我们提出了混元图像 2.1（HunyuanImage-2.1），这是一个能够生成 2K（2048 × 2048）分辨率图像的高效文本到图像模型。通过利用大规模数据集和涉及多个专家模型的结构化标注，我们显著增强了文本-图像对齐能力。该模型采用高表达性的 VAE，具有（32 × 32）的空间压缩比，大幅降低了计算成本。
+我们提出了混元图像 2.1（HunyuanImage-2.1），这是一个能够生成 2K（2048 × 2048）分辨率图像的高效文生图模型。通过利用大规模数据集和涉及多个专家模型的结构化标注，我们显著增强了文本-图像对齐能力。该模型采用高表达性的 VAE，具有（32 × 32）的空间压缩比，大幅降低了计算成本。
 
 我们的架构包含两个阶段：
-1. **基础文本到图像模型**：第一阶段是一个文本到图像模型，利用两个文本编码器：一个多模态大语言模型（MLLM）来改善图像-文本对齐，以及一个多语言、字符感知编码器来增强各种语言的文本渲染。该阶段具有 170 亿参数的单流和双流 Diffusion Transformer。为了优化美学和结构连贯性，我们应用了人类反馈强化学习（RLHF）。
+1. **基础文生图模型**：第一阶段是一个文生图模型，利用两个文本编码器：一个多模态大语言模型（MLLM）来改善图像-文本对齐，以及一个多语言、字符感知编码器来增强各种语言的文本渲染。该阶段具有 170 亿参数的单流和双流 Diffusion Transformer。为了优化美学和结构连贯性，我们应用了人类反馈强化学习（RLHF）。
 2. **精修模型**：第二阶段引入了一个精修模型，进一步提升了图像质量和清晰度。
 
 此外，我们开发了 PromptEnhancer 模块来进一步提升模型性能，并采用 MeanFlow 蒸馏进行高效推理。混元图像 2.1 展现了强大的语义对齐和跨场景泛化能力，提升了文本与图像之间的一致性，增强了对场景细节、人物姿态和表情的控制，并能够生成具有不同描述的多个物体。
+
+👑 我们在 Arena 文生图开源模型排行榜上获得第一名。
+
+<div align="center">
+  <img src="./assets/leaderboard.png" width=70% alt="HunyuanImage 2.1 Demo">
+</div>
 
 ## 混元图像 2.1 整体流程
 
@@ -82,7 +94,7 @@
 
 结构化标注在短、中、长和超长级别提供分层语义信息，显著增强了模型对复杂语义的响应能力。创新性地引入了 OCR 专家模型和 IP RAG 来解决通用 VLM 标注器在密集文本和世界知识描述方面的不足，而双向验证策略确保了标注的准确性。
 
-### 文本到图像模型架构
+### 文生图模型架构
 
 <p align="center">
   <img src="./assets/framework_overall.png" width=100% alt="HunyuanImage 2.1 Architecture">
@@ -105,7 +117,7 @@
   <img src="./assets/framework_prompt_rewrite.png" width=90% alt="HunyuanImage 2.1 Architecture">
 </p>
 
-* **首个系统性工业级改写模型**：SFT 训练结构化地重写用户文本指令以丰富视觉表达，而 GRPO 训练采用细粒度语义 AlignEvaluator 奖励模型来大幅提升从重写文本生成的图像语义。AlignEvaluator 涵盖 6 个主要类别和 24 个细粒度评估点。PromptEnhancer 支持中英文重写，并在增强开源和专有文本到图像模型的语义方面展现了通用适用性。
+* **首个系统性工业级改写模型**：SFT 训练结构化地重写用户文本指令以丰富视觉表达，而 GRPO 训练采用细粒度语义 AlignEvaluator 奖励模型来大幅提升从重写文本生成的图像语义。AlignEvaluator 涵盖 6 个主要类别和 24 个细粒度评估点。PromptEnhancer 支持中英文重写，并在增强开源和专有文生图模型的语义方面展现了通用适用性。
 
 ### 模型蒸馏
 我们提出了一种基于 MeanFlow 的新型蒸馏方法，解决了标准均值流训练固有的不稳定性和低效率的关键挑战。这种方法能够仅用少量采样步骤生成高质量图像。据我们所知，这是 MeanFlow 在工业级模型上的首次成功应用。
@@ -121,7 +133,7 @@
 - 提示词增强：自动重写提示词，提高描述精度与画面质量
 
 ## 提示词增强示例
-为了提升生成图像的质量和细节，我们引入了提示词增强模型。该模型能够自动丰富用户提供的文本提示，添加丰富的描述性细节。
+为了提升生成图像的质量和细节，我们使用了提示词重写模型。该模型能够自动增强用户提供的文本提示词，添加详细和描述性的信息。
 <p align="center">
   <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
 </p>
@@ -206,9 +218,24 @@ pip install flash-attn==2.7.3 --no-build-isolation
 模型的下载与说明请参考[这里](ckpts/checkpoints-download.md)。
 
 ## 🔑 使用
-HunyuanImage-2.1 仅支持 2K 分辨率图像生成（如 1:1 时为 2048x2048，16:9 时为 2560x1536 等）。
-使用其1K分辨率生成图像可能会带来画质下降与瑕疵。
-此外，我们建议使用完整的生成流程以获得更高画质（即启用提示词增强和精修功能）。
+
+### 提示词增强
+
+提示词增强在使我们的模型生成高质量图像方面发挥着**关键作用**。通过编写更长、更详细的提示词，生成的图像将得到显著改善。我们鼓励您制作全面和描述性的提示词以获得最佳的图像质量。
+
+我们强烈推荐您尝试 [PromptEnhancer-32B 模型](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) 以获得更高质量的提示词增强。
+
+### 文生图
+HunyuanImage-2.1 **仅支持 2K** 图像生成（如 1:1 时为 2048x2048，16:9 时为 2560x1536 等）。
+使用 1K 分辨率生成图像可能会导致画质下降与瑕疵。
+
+此外，我们**强烈建议**使用完整的生成流程以获得更高画质（即启用提示词增强和精修功能）。
+
+| 模型类型               | 模型名称                | 描述                             | num_inference_steps | guidance_scale | shift |
+|--------------------------|---------------------------|-----------------------------------------|---------------------|----------------|-------|
+| 基础的文生图模型 | hunyuanimage2.1           | 未蒸馏模型，质量最佳。 | 50                  | 3.5            | 5     |
+| 蒸馏的文生图模型 | hunyuanimage2.1-distilled | 蒸馏模型，推理更快    | 8                   | 3.25           | 4     |
+| 精修模型                  | hunyuanimage-refiner      | 精修模型                       | N/A                 | N/A            | N/A   |
 
 
 ```python
@@ -222,22 +249,29 @@ model_name = "hunyuanimage-v2.1"
 pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
 pipe = pipe.to("cuda")
 
-prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
+# 输入提示词
+prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word "Tencent" on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
+
+# 生成不同宽高比的图像
+aspect_ratios = {
+    "16:9": (2560, 1536),
+    "4:3": (2304, 1792),
+    "1:1": (2048, 2048),
+    "3:4": (1792, 2304),
+    "9:16": (1536, 2560),
+}
+
+width, height = aspect_ratios["1:1"]
+
 image = pipe(
     prompt=prompt,
-    # HunyuanImage-2.1 支持的分辨率与宽高比示例：
-    # 16:9  -> width=2560, height=1536
-    # 4:3   -> width=2304, height=1792
-    # 1:1   -> width=2048, height=2048
-    # 3:4   -> width=1792, height=2304
-    # 9:16  -> width=1536, height=2560
-    # 建议使用上述长宽组合以获得最佳效果。
-    width=2048,
-    height=2048,
-    use_reprompt=False,  # 启用提示词增强 (可能会导致更高的显存使用)
-    use_refiner=True,   # 启用精修模型, 以获得更高画质
-    # 对于蒸馏版模型，建议使用 8 步以加快推理速度
-    # 对于非蒸馏版模型，建议使用 50 步以获得更高画质
+    width=width,
+    height=height,
+    # 如果您已经使用提示词增强来增强提示词，请禁用 reprompt
+    use_reprompt=False,  # 启用提示词增强（可能会导致更高的显存使用）
+    use_refiner=True,   # 启用精修模型
+    # 对于蒸馏模型，使用 8 步以加快推理速度
+    # 对于非蒸馏模型，使用 50 步以获得更好质量
     num_inference_steps=8 if "distilled" in model_name else 50, 
     guidance_scale=3.25 if "distilled" in model_name else 3.5,
     shift=4 if "distilled" in model_name else 5,

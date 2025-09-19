@@ -204,7 +204,7 @@ Additionally, we **highly recommend** using the full generation pipeline for bet
 | model type               | model name                | description                             | num_inference_steps | guidance_scale | shift |
 |--------------------------|---------------------------|-----------------------------------------|---------------------|----------------|-------|
 | Base text-to-image Model | hunyuanimage2.1           | Undistilled model for the best quality. | 50                  | 3.5            | 5     |
-|                          | hunyuanimage2.1-distilled | Distilled model for faster inference    | 8                   | 3.25           | 4     |
+| Distilled text-to-image Model | hunyuanimage2.1-distilled | Distilled model for faster inference    | 8                   | 3.25           | 4     |
 | Refiner                  | hunyuanimage-refiner      | The refiner model                       | N/A                 | N/A            | N/A   |
 
 
@@ -249,7 +249,7 @@ image = pipe(
     seed=649151,
 )
 
-image.save(f"generated_image.png")
+image.save("generated_image.png")
 ```
 
 ## Prompt Enhanced Demo
