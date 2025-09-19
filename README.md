@@ -29,7 +29,7 @@
 </div> -->
 
 <p align="center">
-    👋 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> 
+    👏 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> and <a href="https://discord.gg/ehjWMqF5wY">Discord</a>
 </p>
 
 
@@ -304,6 +304,11 @@ From the SSAE evaluation results, our model has currently achieved the optimal p
 
 We adopted the GSB evaluation method commonly used to assess the relative performance between two models from an overall image perception perspective. In total, we utilized 1000 text prompts, generating an equal number of image samples for all compared models in a single run. For a fair comparison, we conducted inference only once for each prompt, avoiding any cherry-picking of results. When comparing with the baseline methods, we maintained the default settings for all selected models. The evaluation was performed by more than 100 professional evaluators.
 From the results, HunyuanImage 2.1 achieved a relative win rate of -1.36% against Seedream3.0 (closed-source) and 2.89% outperforming Qwen-Image (open-source). The GSB evaluation results demonstrate that HunyuanImage 2.1, as an open-source model, has reached a level of image generation quality comparable to closed-source commercial models (Seedream3.0), while showing certain advantages in comparison with similar open-source models (Qwen-Image). This fully validates the technical advancement and practical value of HunyuanImage 2.1 in text-to-image generation tasks.
+
+
+### Contact
+Feel free to join our Discord server or join our WeChat groups—not only to exchange ideas and explore collaboration, but also to ask any questions you might have. You're welcome to open an issue or submit a pull request on GitHub. Your feedback is valuable to us and helps drive HunyuanImage forward. Thank you for being a part of our community!
+
 
 ## 🔗 BibTeX
 
