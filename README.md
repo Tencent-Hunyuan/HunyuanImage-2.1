@@ -17,16 +17,6 @@
 </p>
 
 
-<!-- <div align="center">
-  <a href=https://github.com/Tencent-Hunyuan/HunyuanImage-2.1 target="_blank"><img src=https://img.shields.io/badge/Code-black.svg?logo=github height=22px></a>
-  <a href="https://huggingface.co/spaces/tencent/HunyuanImage-2.1" target="_blank">
-    <img src="https://img.shields.io/badge/Demo%20Page-blue" height="22px"></a>
-  <a href=https://huggingface.co/tencent/HunyuanImage-2.1 target="_blank"><img src=https://img.shields.io/badge/%F0%9F%A4%97%20Models-d96902.svg height=22px></a>
-  <a href="#" target="_blank"><img src="https://img.shields.io/badge/Report-Coming%20Soon-blue" height="22px"></a><br/>
-  <a href="https://www.arxiv.org/abs/2509.04545" target="https://arxiv.org/abs/2509.04545"><img src="https://img.shields.io/badge/PromptEnhancer-Report-yellow" height="22px"></a>
-  <a href= https://hunyuan-promptenhancer.github.io/ target="_blank"><img src=https://img.shields.io/badge/PromptEnhancer-bb8a2e.svg?logo=github height=22px></a><br/>
-  <a href=https://x.com/TencentHunyuan target="_blank"><img src=https://img.shields.io/badge/Hunyuan-black.svg?logo=x height=22px></a>
-</div> -->
 
 <p align="center">
     👏 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> and <a href="https://discord.gg/ehjWMqF5wY">Discord</a>
@@ -49,40 +39,6 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
 - September 12, 2025: 🚀 Released FP8 quantized models! Making it possible to generate 2K images with only 24GB GPU memory!
 - September 8, 2025: 🚀 Released inference code and model weights for HunyuanImage-2.1.
 
-
-<!-- ## 🎥 Demo
-
-<div align="center">
-  <img src="./assets/demo.jpg" width=100% alt="HunyuanImage 2.1 Demo">
-</div> -->
-
-<!-- ## Contents
-- [HunyuanImage-2.1: An Efficient Diffusion Model for High-Resolution (2K) Text-to-Image Generation​](#hunyuanimage-21-an-efficient-diffusion-model-for-high-resolution-2k-text-to-image-generation)
-  - [🔥🔥🔥 Latest Updates](#-latest-updates)
-  - [🎥 Demo](#-demo)
-  - [Contents](#contents)
-  - [Abstract](#abstract)
-  - [HunyuanImage-2.1 Overall Pipeline](#hunyuanimage-21-overall-pipeline)
-    - [Training Data and Caption](#training-data-and-caption)
-    - [Text-to-Image Model Architecture](#text-to-image-model-architecture)
-    - [Reinforcement Learning from Human Feedback](#reinforcement-learning-from-human-feedback)
-    - [Rewriting Model](#rewriting-model)
-    - [Model distillation](#model-distillation)
-  - [🎉 HunyuanImage-2.1 Key Features](#-hunyuanimage-21-key-features)
-  - [Prompt Enhanced Demo](#prompt-enhanced-demo)
-  - [📈 Comparisons](#-comparisons)
-    - [SSAE Evaluation](#ssae-evaluation)
-    - [GSB Evaluation](#gsb-evaluation)
-  - [📜 System Requirements](#-system-requirements)
-  - [🛠️ Dependencies and Installation](#️-dependencies-and-installation)
-  - [🧱 Download Pretrained Models](#-download-pretrained-models)
-  - [🔑 Usage](#-usage)
-  - [🔗 BibTeX](#-bibtex)
-  - [Acknowledgements](#acknowledgements)
-  - [Github Star History](#github-star-history)
-
---- -->
-<!-- - [🧩 Community Contributions](#-community-contributions) -->
 ## Introduction
 We are excited to introduce **HunyuanImage-2.1**, a 17B text-to-image model that is capable of generating **2K (2048 × 2048) resolution** images. 
 
@@ -100,47 +56,6 @@ Additionally, we developed the PromptEnhancer module to further boost model perf
   <img src="./assets/leaderboard.png" width=70% alt="HunyuanImage 2.1 Demo">
 </div>
  
-<!-- 
-## HunyuanImage-2.1 Overall Pipeline
-
-### Training Data and Caption
-
-Structured captions provide hierarchical semantic information at short, medium, long, and extra-long levels, significantly enhancing the model’s responsiveness to complex semantics. Innovatively, an OCR agent and IP RAG are introduced to address the shortcomings of general VLM captioners in dense text and world knowledge descriptions, while a bidirectional verification strategy ensures caption accuracy.
-
-
-### Text-to-Image Model Architecture
-
-<p align="center">
-  <img src="./assets/framework_overall.png" width=100% alt="HunyuanImage 2.1 Architecture">
-</p>
-
-
-
-Core Components:
-* High-Compression VAE with REPA Training Acceleration:
-  * A VAE with a 32× compression rate drastically reduces the number of input tokens for the DiT model. By aligning its feature space with DINOv2 features, we facilitate the training of high-compression VAEs. As a result, our model generates 2K images with the same token length (and thus similar inference time) as other models require for 1K images, achieving superior inference efficiency.
-  * Multi-bucket, multi-resolution REPA loss aligns DiT features with a high-dimensional semantic feature space, accelerating model convergence.
-* Dual Text Encoder:
-  * A vision-language multimodal encoder is employed to better understand scene descriptions, character actions, and detailed requirements.
-  * A multilingual ByT5 text encoder is introduced to specialize in text generation and multilingual expression.
-* Network: A single- and dual-stream diffusion transformer with 17 billion parameters.
-
-### Reinforcement Learning from Human Feedback
-Two-Stage Post-Training with Reinforcement Learning: Supervised Fine-Tuning (SFT) and Reinforcement Learning (RL) are applied sequentially in two post-training stages. We introduce a Reward Distribution Alignment algorithm, which innovatively incorporates high-quality images as selected samples to ensure stable and improved reinforcement learning outcomes.
-
-### Rewriting Model
-<p align="center">
-  <img src="./assets/framework_prompt_rewrite.png" width=90% alt="HunyuanImage 2.1 Architecture">
-</p>
-
-* The first systematic industrial-level rewriting model. SFT training structurally rewrites user text instructions to enrich visual expression, while GRPO training employs a fine-grained semantic AlignEvaluator reward model to substantially improve the semantics of images generated from rewritten text. The AlignEvaluator covers 6 major categories and 24 fine-grained assessment points. PromptEnhancer supports both Chinese and English rewriting and demonstrates general applicability in enhancing semantics for both open-source and proprietary text-to-image models.
-
-### Model distillation
-We propose a novel distillation method based on meanflow that addresses the key challenges of instability and inefficiency inherent in standard meanflow training. This approach enables high-quality image generation with only a few sampling steps. To our knowledge, this is the first successful application of meanflow to an industrial-scale model.
-
-
-
- -->
 
 ## 🎉 HunyuanImage-2.1 Key Features
 
@@ -220,7 +135,7 @@ pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
 pipe = pipe.to("cuda")
 
 # The input prompt
-prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word “Tencent” on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
+prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word \"Tencent\" on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
 
 
 # Generate with different aspect ratios
@@ -252,11 +167,62 @@ image = pipe(
 image.save("generated_image.png")
 ```
 
-## Prompt Enhanced Demo
-To improve the quality and detail of generated images, we use a prompt rewriting model. This model automatically enhances user-provided text prompts by adding detailed and descriptive information.
+## More Cases
+Our model can follow complex instructions to generate high‑quality, creative images. We recommend using longer, more detailed prompts.
+ 
 <p align="center">
-  <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
+<table>
+<thead>
+<tr>
+    <th>Index</th>  <th>User Prompt</th> <th>Image</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>1</td> <td>宏伟教堂的内部，穹顶下方的中央矗立着一尊小巧的维纳斯雕像，微微侧对镜头。雕像没有双手，布满裂纹，表面若干古老的水泥片剥落，露出内部真人质感的牛奶肌肤。雕像穿着薄薄的白色婚纱，在雕像的身后，一只浮空水泥断手轻轻提起长长的婚纱拖尾；在雕像的头顶上方，另一只浮空水泥断手正为她戴上一个由白色花朵组成的花环，雕像本身是没有双手的。教堂穹顶上布满彩色玻璃窗，一束阳光从上往下照射到雕像上，形成丁达尔效应，光斑点点洒在雕像的脸庞和胸前。充满神性的光辉，背景微微虚化，物体的边缘模糊柔和。拉斐尔前派的梦幻朦胧美学风格。</td> <td><img src="./assets/demo_case1.png" width=100%></td>
+</tr>
+<tr>
+    <td>2</td> <td>A hyper-realistic photograph of a crystal ball diorama sitting atop fluffy forest moss and surrounded by scattered sunlight. Inside, detailed diorama features a Tencent meeting room, an animated chat bubble sculpture, and several joyful penguins—one wearing a graduation cap, others playing soccer and waving tiny banners. The base of the crystal sphere boldly presents ""Tencent"" in large, crisp, white 3D letters. Background is softly blurred and bokeh-rich, emphasizing the cute, vibrant details of the sphere.</td>  <td><img src="./assets/demo_case2.png" width=100%></td>
+</tr>
+<tr>
+    <td>3</td> <td>A close-up portrait of an elderly Italian man with deeply wrinkled skin, expressive hazel eyes, and a neatly trimmed white mustache. His olive-toned complexion shows the marks of sun and age, and he wears a flat cap slightly tilted to the side. He smiles faintly, revealing warmth and wisdom, while holding a small espresso cup in one hand. The softly blurred background shows a rustic stone wall with climbing ivy, captured in a realistic photography style.</td> <td><img src="./assets/demo_case3.png" width=100%></td>
+</tr>
+<tr>
+    <td>4</td> <td>An open vintage suitcase on a neutral, softly lit background. The suitcase is made of deep brown, worn leather with visible scuffs and creases, and its interior is lined with dark, plush fabric. Inside the suitcase is a meticulously crafted miniature landscape of China, featuring the Great Wall of China winding across model mountains, the pagoda roofs of the Forbidden City, and a representation of the terracotta army, all interwoven with vibrant green rice paddies.  On the side of the suitcase, a text "China" is labeled. The entire diorama is bathed in warm, ethereal light, with a dreamy lens bloom and soft, glowing highlights. Photorealistic style, ultra-detailed textures, cinematic lighting.</td> <td><img src="./assets/demo_case4.png" width=100%></td>
+</tr>
+</tbody>
+</table>
 </p>
+
+
+ To improve the quality and detail of generated images, we use a prompt rewriting model. This model automatically enhances user-provided text prompts by adding detailed and descriptive information.
+<p align="center">
+<table>
+<thead>
+<tr>
+    <th>Index</th>  <th>User Prompt</th> <th>Prompt Enhanced</th> <th>Image</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>1</td> <td>Wildlife poster for Serengeti plains. Wide-eyed chibi explorer riding friendly lion cub. 'Serengeti: Roar of Adventure' in whimsical font. 'Where Dreams Run Wild' tagline. Warm yellows and soft browns.</td> <td> A wildlife poster design for the Serengeti plains features a central illustration of a chibi-style explorer riding a lion cub, set against a backdrop of rolling hills. At the top of the composition, the title "Serengeti: Roar of Adventure" is displayed in a large, whimsical font with decorative, swirling letters. The main scene depicts a wide-eyed chibi explorer, characterized by a large head and a small body, sitting atop a friendly lion cub. The explorer wears a green explorer's hat, a backpack, and holds onto the cub's mane, looking forward with a look of wonder. The lion cub, with a light brown mane and a smiling expression, strides forward, its body rendered in warm orange tones. In the background, the Serengeti plains are illustrated with rolling hills and savanna grass, all in shades of warm yellow and soft brown. Below the main illustration, the tagline "Where Dreams Run Wild" is written in a smaller, elegant script. The overall presentation is that of a poster design, combining a cute chibi illustration style with playful, whimsical typography.</td> <td><img src="./assets/demo_case5.png" width=100%></td>
+</tr>
+<tr>
+    <td>2</td> <td>Energetic poster for New York City. Anime businesswoman hailing a taxi with skyscrapers and Times Square signs around. 'NYC: Bright Ambitions' in urban graffiti font. 'Own Every Dream' tagline. Saturated yellows, reds, and sharp blues.</td> <td>An energetic poster for New York City unfolds, featuring a dynamic scene with an anime-style businesswoman in the midst of hailing a taxi. The central figure is a young woman with large, expressive eyes and dark hair styled in a bob, wearing a professional blue business suit with motion lines indicating movement. She stands on a bustling street, her arms outstretched as she calls for a classic yellow taxi cab that is approaching. In the background, towering skyscrapers with sleek, anime-inspired architecture rise into the sky, adorned with vibrant, glowing billboards and neon signs characteristic of Times Square. Across the top of the poster, the text "NYC: Bright Ambitions" is displayed in a large, stylized urban graffiti font, with spray-paint-like edges. Below this main title, the tagline "Own Every Dream" is written in a smaller, clean font. The entire composition is rendered with saturated colors, dominated by bright yellows, reds, and sharp blues. The overall presentation is a fusion of anime illustration and graphic design.</td> <td><img src="./assets/demo_case6.png" width=100%></td>
+</tr>
+<tr>
+    <td>3</td> <td>An artistic studio portrait captures a high fashion model in a striking, dynamic pose. Her face is a canvas for avant-garde makeup, defined by bold, geometric applications of primary colors. She wears a sculptural, unconventional garment, emphasizing clean lines and form. The scene is illuminated by dramatic studio lighting, creating sharp contrasts and highlighting her features against an abstract, blurred background of colors. The image is presented in a realistic photography style.</td> <td> An artistic studio portrait captures a high fashion model in a striking, dynamic pose, her body twisted with one arm raised high to convey energy and movement. Her face serves as a canvas for avant-garde makeup, featuring bold, geometric applications of primary colors; vibrant yellow triangles are painted on her forehead, and electric blue lines accentuate her eye sockets. She wears a sculptural, unconventional garment made of a stiff, matte white fabric, with asymmetrical panels that wrap around her torso, emphasizing clean lines and form. Illuminated by dramatic studio lighting, with a strong beam from the side casting sharp shadows and highlighting the contours of her face and body against an abstract, blurred background of purples and oranges, creating a bokeh effect. Realistic photography style. </td> <td><img src="./assets/demo_case7.png" width=100%></td>
+</tr>
+<tr>
+    <td>4</td> <td>An environmental portrait of a chef, captured with a focused expression in a bustling kitchen. He holds culinary tools, his gaze fixed on his work, embodying passion and creativity. The background is a blur of motion with stainless steel counters, all illuminated by a warm ambient light. The image is presented in a realistic photography style.</td> <td> An environmental portrait of a male chef in the midst of work within a bustling kitchen. The chef, as the central subject and viewed from the chest up, has a focused expression with a furrowed brow, his gaze directed downward at the culinary tools he holds. He wears a professional white chef‘s jacket and a traditional toque, with flour lightly dusting his face and clothes. In his hands, he grips a large chef’s knife and a metal spatula, poised over an unseen cooking surface. The background is a dynamic blur of motion, with out-of-focus shapes of stainless steel counters, pots, and other kitchen equipment suggesting a busy environment. Warm ambient light from overhead fixtures casts a golden hue, creating highlights on the chef‘s jacket and the tools. Realistic photography style, characterized by a shallow depth of field that emphasizes the subject while conveying the energy and creativity of the kitchen. </td>  <td><img src="./assets/demo_case8.png" width=100%></td>
+</tr>
+</tbody>
+</table>
+</p>
+
+<!-- <p align="center">
+  <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
+</p> -->
 
 
 

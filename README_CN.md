@@ -37,40 +37,6 @@
 - 2025 年 9 月 12 日：🚀 发布 FP8 量化模型！仅需 24GB GPU 显存即可生成 2K 图像！
 - 2025 年 9 月 8 日：🚀 发布混元图像 2.1 的推理代码与模型权重。
 
-<!-- ## 🎥 示例
-
-<div align="center">
-  <img src="./assets/show_cases.png" width=100% alt="HunyuanImage 2.1 Demo">
-</div> -->
-
-
-<!-- ## 目录
-- [混元图像 2.1：一种用于高分辨率（2K）文本到图像生成的高效扩散模型](#混元图像-21一种用于高分辨率2k文本到图像生成的高效扩散模型)
-  - [🔥🔥🔥 最新动态](#-最新动态)
-  - [目录](#目录)
-  - [摘要](#摘要)
-  - [混元图像 2.1 整体流程](#混元图像-21-整体流程)
-    - [训练数据和标注](#训练数据和标注)
-    - [文生图模型架构](#文生图模型架构)
-    - [人类反馈强化学习](#人类反馈强化学习)
-    - [改写模型](#改写模型)
-    - [模型蒸馏](#模型蒸馏)
-  - [🎉 关键特性](#-关键特性)
-  - [提示词增强示例](#提示词增强示例)
-  - [📈 对比](#-对比)
-    - [SSAE 评测](#ssae-评测)
-    - [GSB 评测](#gsb-评测)
-  - [📜 系统要求](#-系统要求)
-  - [🛠️ 依赖与安装](#️-依赖与安装)
-  - [🧱 模型下载](#-模型下载)
-  - [🔑 使用](#-使用)
-    - [提示词增强](#提示词增强)
-    - [文生图](#文生图)
-  - [🔗 BibTeX](#-bibtex)
-  - [致谢](#致谢)
-  - [Github Star 历史](#github-star-历史)
-
---- -->
 
 ## 介绍
 我们很高兴推出**混元图像 2.1**，这是一个 170 亿参数的文生图模型，能够生成**2K（2048 × 2048）分辨率**的图像。
@@ -84,44 +50,6 @@
 <div align="center">
   <img src="./assets/leaderboard.png" width=70% alt="HunyuanImage 2.1 Demo">
 </div>
-
-<!-- 
-## 混元图像 2.1 整体流程
-
-### 训练数据和标注
-
-结构化标注在短、中、长和超长级别提供分层语义信息，显著增强了模型对复杂语义的响应能力。创新性地引入了 OCR 专家模型和 IP RAG 来解决通用 VLM 标注器在密集文本和世界知识描述方面的不足，而双向验证策略确保了标注的准确性。
-
-### 文生图模型架构
-
-<p align="center">
-  <img src="./assets/framework_overall.png" width=100% alt="HunyuanImage 2.1 Architecture">
-</p>
-
-**核心组件：**
-* **高压缩 VAE 与 REPA 训练加速**：
-  * 具有 32× 压缩率的 VAE 大幅减少了 DiT 模型的输入 token 数量。其特征空间与 DINOv2 特征对齐，便于高压缩 VAE 的训练。这显著提高了推理效率，使得HunyuanImage 2.1 生成 2K 图像的时间与其他模型生成 1K 图像的时间相同。
-  * 多桶、多分辨率 REPA 损失将 DiT 特征与高维语义特征空间对齐，加速模型收敛。
-* **双文本编码器**：
-  * 采用视觉-语言多模态编码器来更好地理解场景描述、人物动作和详细要求。
-  * 引入多语言 ByT5 文本编码器，专门用于文本生成和多语言表达。
-* **网络**：具有 170 亿参数的单流和双流 Diffusion Transformer。
-
-### 人类反馈强化学习
-**两阶段后训练与强化学习**：监督微调（SFT）和强化学习（RL）在两个后训练阶段中顺序应用。我们引入了奖励分布对齐算法，创新性地将高质量图像作为选定样本，确保稳定和改进的强化学习结果。
-
-### 改写模型
-<p align="center">
-  <img src="./assets/framework_prompt_rewrite.png" width=90% alt="HunyuanImage 2.1 Architecture">
-</p>
-
-* **首个系统性工业级改写模型**：SFT 训练结构化地重写用户文本指令以丰富视觉表达，而 GRPO 训练采用细粒度语义 AlignEvaluator 奖励模型来大幅提升从重写文本生成的图像语义。AlignEvaluator 涵盖 6 个主要类别和 24 个细粒度评估点。PromptEnhancer 支持中英文重写，并在增强开源和专有文生图模型的语义方面展现了通用适用性。
-
-### 模型蒸馏
-我们提出了一种基于 MeanFlow 的新型蒸馏方法，解决了标准均值流训练固有的不稳定性和低效率的关键挑战。这种方法能够仅用少量采样步骤生成高质量图像。据我们所知，这是 MeanFlow 在工业级模型上的首次成功应用。
-
-
--->
 
 ## 🎉 混元图像 2.1 关键特性
 
@@ -195,7 +123,7 @@ pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
 pipe = pipe.to("cuda")
 
 # 输入提示词
-prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word "Tencent" on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
+prompt = "A cute, cartoon-style anthropomorphic penguin plush toy with fluffy fur, standing in a painting studio, wearing a red knitted scarf and a red beret with the word \"Tencent\" on it, holding a paintbrush with a focused expression as it paints an oil painting of the Mona Lisa, rendered in a photorealistic photographic style."
 
 # 生成不同宽高比的图像
 aspect_ratios = {
@@ -226,10 +154,57 @@ image = pipe(
 image.save("generated_image.png")
 ```
 
-## 提示词增强示例
+## 更多案例
+我们的模型可以根据复杂指令生成高质量、具有创意的图像。我们建议使用更长、更详细的提示词。
+ 
+<p align="center">
+<table>
+<thead>
+<tr>
+    <th>Index</th>  <th>用户提示词</th> <th>图像</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>1</td> <td>宏伟教堂的内部，穹顶下方的中央矗立着一尊小巧的维纳斯雕像，微微侧对镜头。雕像没有双手，布满裂纹，表面若干古老的水泥片剥落，露出内部真人质感的牛奶肌肤。雕像穿着薄薄的白色婚纱，在雕像的身后，一只浮空水泥断手轻轻提起长长的婚纱拖尾；在雕像的头顶上方，另一只浮空水泥断手正为她戴上一个由白色花朵组成的花环，雕像本身是没有双手的。教堂穹顶上布满彩色玻璃窗，一束阳光从上往下照射到雕像上，形成丁达尔效应，光斑点点洒在雕像的脸庞和胸前。充满神性的光辉，背景微微虚化，物体的边缘模糊柔和。拉斐尔前派的梦幻朦胧美学风格。</td> <td><img src="./assets/demo_case1.png" width=100%></td>
+</tr>
+<tr>
+    <td>2</td> <td>A hyper-realistic photograph of a crystal ball diorama sitting atop fluffy forest moss and surrounded by scattered sunlight. Inside, detailed diorama features a Tencent meeting room, an animated chat bubble sculpture, and several joyful penguins—one wearing a graduation cap, others playing soccer and waving tiny banners. The base of the crystal sphere boldly presents ""Tencent"" in large, crisp, white 3D letters. Background is softly blurred and bokeh-rich, emphasizing the cute, vibrant details of the sphere.</td>  <td><img src="./assets/demo_case2.png" width=100%></td>
+</tr>
+<tr>
+    <td>3</td> <td>A close-up portrait of an elderly Italian man with deeply wrinkled skin, expressive hazel eyes, and a neatly trimmed white mustache. His olive-toned complexion shows the marks of sun and age, and he wears a flat cap slightly tilted to the side. He smiles faintly, revealing warmth and wisdom, while holding a small espresso cup in one hand. The softly blurred background shows a rustic stone wall with climbing ivy, captured in a realistic photography style.</td> <td><img src="./assets/demo_case3.png" width=100%></td>
+</tr>
+<tr>
+    <td>4</td> <td>An open vintage suitcase on a neutral, softly lit background. The suitcase is made of deep brown, worn leather with visible scuffs and creases, and its interior is lined with dark, plush fabric. Inside the suitcase is a meticulously crafted miniature landscape of China, featuring the Great Wall of China winding across model mountains, the pagoda roofs of the Forbidden City, and a representation of the terracotta army, all interwoven with vibrant green rice paddies.  On the side of the suitcase, a text "China" is labeled. The entire diorama is bathed in warm, ethereal light, with a dreamy lens bloom and soft, glowing highlights. Photorealistic style, ultra-detailed textures, cinematic lighting.</td> <td><img src="./assets/demo_case4.png" width=100%></td>
+</tr>
+</tbody>
+</table>
+</p>
+
+
 为了提升生成图像的质量和细节，我们使用了提示词重写模型。该模型能够自动增强用户提供的文本提示词，添加详细和描述性的信息。
 <p align="center">
-  <img src="./assets/reprompt.jpg" width=100% alt="Human Evaluation with Other Models">
+<table>
+<thead>
+<tr>
+    <th>Index</th>  <th>用户提示词</th> <th>增强提示词</th> <th>图像</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>1</td> <td>Wildlife poster for Serengeti plains. Wide-eyed chibi explorer riding friendly lion cub. 'Serengeti: Roar of Adventure' in whimsical font. 'Where Dreams Run Wild' tagline. Warm yellows and soft browns.</td> <td> A wildlife poster design for the Serengeti plains features a central illustration of a chibi-style explorer riding a lion cub, set against a backdrop of rolling hills. At the top of the composition, the title "Serengeti: Roar of Adventure" is displayed in a large, whimsical font with decorative, swirling letters. The main scene depicts a wide-eyed chibi explorer, characterized by a large head and a small body, sitting atop a friendly lion cub. The explorer wears a green explorer's hat, a backpack, and holds onto the cub's mane, looking forward with a look of wonder. The lion cub, with a light brown mane and a smiling expression, strides forward, its body rendered in warm orange tones. In the background, the Serengeti plains are illustrated with rolling hills and savanna grass, all in shades of warm yellow and soft brown. Below the main illustration, the tagline "Where Dreams Run Wild" is written in a smaller, elegant script. The overall presentation is that of a poster design, combining a cute chibi illustration style with playful, whimsical typography.</td> <td><img src="./assets/demo_case5.png" width=100%></td>
+</tr>
+<tr>
+    <td>2</td> <td>Energetic poster for New York City. Anime businesswoman hailing a taxi with skyscrapers and Times Square signs around. 'NYC: Bright Ambitions' in urban graffiti font. 'Own Every Dream' tagline. Saturated yellows, reds, and sharp blues.</td> <td>An energetic poster for New York City unfolds, featuring a dynamic scene with an anime-style businesswoman in the midst of hailing a taxi. The central figure is a young woman with large, expressive eyes and dark hair styled in a bob, wearing a professional blue business suit with motion lines indicating movement. She stands on a bustling street, her arms outstretched as she calls for a classic yellow taxi cab that is approaching. In the background, towering skyscrapers with sleek, anime-inspired architecture rise into the sky, adorned with vibrant, glowing billboards and neon signs characteristic of Times Square. Across the top of the poster, the text "NYC: Bright Ambitions" is displayed in a large, stylized urban graffiti font, with spray-paint-like edges. Below this main title, the tagline "Own Every Dream" is written in a smaller, clean font. The entire composition is rendered with saturated colors, dominated by bright yellows, reds, and sharp blues. The overall presentation is a fusion of anime illustration and graphic design.</td> <td><img src="./assets/demo_case6.png" width=100%></td>
+</tr>
+<tr>
+    <td>3</td> <td>An artistic studio portrait captures a high fashion model in a striking, dynamic pose. Her face is a canvas for avant-garde makeup, defined by bold, geometric applications of primary colors. She wears a sculptural, unconventional garment, emphasizing clean lines and form. The scene is illuminated by dramatic studio lighting, creating sharp contrasts and highlighting her features against an abstract, blurred background of colors. The image is presented in a realistic photography style.</td> <td> An artistic studio portrait captures a high fashion model in a striking, dynamic pose, her body twisted with one arm raised high to convey energy and movement. Her face serves as a canvas for avant-garde makeup, featuring bold, geometric applications of primary colors; vibrant yellow triangles are painted on her forehead, and electric blue lines accentuate her eye sockets. She wears a sculptural, unconventional garment made of a stiff, matte white fabric, with asymmetrical panels that wrap around her torso, emphasizing clean lines and form. Illuminated by dramatic studio lighting, with a strong beam from the side casting sharp shadows and highlighting the contours of her face and body against an abstract, blurred background of purples and oranges, creating a bokeh effect. Realistic photography style. </td> <td><img src="./assets/demo_case7.png" width=100%></td>
+</tr>
+<tr>
+    <td>4</td> <td>An environmental portrait of a chef, captured with a focused expression in a bustling kitchen. He holds culinary tools, his gaze fixed on his work, embodying passion and creativity. The background is a blur of motion with stainless steel counters, all illuminated by a warm ambient light. The image is presented in a realistic photography style.</td> <td> An environmental portrait of a male chef in the midst of work within a bustling kitchen. The chef, as the central subject and viewed from the chest up, has a focused expression with a furrowed brow, his gaze directed downward at the culinary tools he holds. He wears a professional white chef‘s jacket and a traditional toque, with flour lightly dusting his face and clothes. In his hands, he grips a large chef’s knife and a metal spatula, poised over an unseen cooking surface. The background is a dynamic blur of motion, with out-of-focus shapes of stainless steel counters, pots, and other kitchen equipment suggesting a busy environment. Warm ambient light from overhead fixtures casts a golden hue, creating highlights on the chef‘s jacket and the tools. Realistic photography style, characterized by a shallow depth of field that emphasizes the subject while conveying the energy and creativity of the kitchen. </td>  <td><img src="./assets/demo_case8.png" width=100%></td>
+</tr>
+</tbody>
+</table>
 </p>
 
 ## 📈 对比
