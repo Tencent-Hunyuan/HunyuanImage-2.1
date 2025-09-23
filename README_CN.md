@@ -154,8 +154,14 @@ image = pipe(
 image.save("generated_image.png")
 ```
 
-## 更多案例
-我们的模型可以根据复杂指令生成高质量、具有创意的图像。我们建议使用更长、更详细的提示词。
+## 更多示例
+我们的模型可以根据复杂指令生成高质量、具有创意的图像。
+
+<div align="center">
+  <img src="./assets/more_cases.jpg" width=100% alt="HunyuanImage 2.1 Demo">
+</div>
+
+我们建议使用更长、更详细的提示词。可以尝试一下我们提供的提示词。
  
 <p align="center">
 <table>

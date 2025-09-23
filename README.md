@@ -168,7 +168,13 @@ image.save("generated_image.png")
 ```
 
 ## More Cases
-Our model can follow complex instructions to generate high‑quality, creative images. We recommend using longer, more detailed prompts.
+Our model can follow complex instructions to generate high‑quality, creative images. 
+
+<div align="center">
+  <img src="./assets/more_cases.jpg" width=100% alt="HunyuanImage 2.1 Demo">
+</div>
+
+We recommend using longer, more detailed prompts. You can also try the prompts we provide.
  
 <p align="center">
 <table>
