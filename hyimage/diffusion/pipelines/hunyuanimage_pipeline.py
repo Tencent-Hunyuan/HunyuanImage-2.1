@@ -16,7 +16,7 @@ from hyimage.common.config import instantiate
 from hyimage.common.constants import PRECISION_TO_TYPE
 from hyimage.common.format_prompt import MultilingualPromptFormat
 from hyimage.models.text_encoder import PROMPT_TEMPLATE
-from hyimage.models.model_zoo import HUNYUANIMAGE_REPROMPT
+from hyimage.models.model_zoo import HUNYUANIMAGE_REPROMPT, HUNYUANIMAGE_REPROMPT_32B
 from hyimage.models.text_encoder.byT5 import load_glyph_byT5_v2
 from hyimage.models.hunyuan.modules.hunyuanimage_dit import load_hunyuan_dit_state_dict
 from hyimage.diffusion.cfg_utils import AdaptiveProjectedGuidance, rescale_noise_cfg
@@ -63,7 +63,7 @@ class HunyuanImagePipelineConfig:
     version: str = ""
 
     @classmethod
-    def create_default(cls, version: str = "v2.1", use_distilled: bool = False, **kwargs):
+    def create_default(cls, version: str = "v2.1", use_distilled: bool = False, reprompt_model="hunyuanimage-reprompt-32b", **kwargs):
         """
         Create a default configuration for specified HunyuanImage version.
 
@@ -84,7 +84,7 @@ class HunyuanImagePipelineConfig:
                 dit_config=dit_config,
                 vae_config=HUNYUANIMAGE_V2_1_VAE_32x(),
                 text_encoder_config=HUNYUANIMAGE_V2_1_TEXT_ENCODER(),
-                reprompt_config=HUNYUANIMAGE_REPROMPT(),
+                reprompt_config=HUNYUANIMAGE_REPROMPT_32B() if reprompt_model == "hunyuanimage-reprompt-32b" else HUNYUANIMAGE_REPROMPT(),
                 shift=4 if use_distilled else 5,
                 default_guidance_scale=3.25 if use_distilled else 3.5,
                 default_sampling_steps=8 if use_distilled else 50,
@@ -889,7 +889,7 @@ class HunyuanImagePipeline:
         return self
 
     @classmethod
-    def from_pretrained(cls, model_name: str = "hunyuanimage-v2.1", use_distilled: bool = False, **kwargs):
+    def from_pretrained(cls, model_name: str = "hunyuanimage-v2.1", use_distilled: bool = False, reprompt_model: str = "hunyuanimage-reprompt-32b", **kwargs):
         """
         Create pipeline from pretrained model.
 
@@ -913,7 +913,7 @@ class HunyuanImagePipeline:
             )
 
         config = HunyuanImagePipelineConfig.create_default(
-            version=version, use_distilled=use_distilled, **kwargs
+            version=version, use_distilled=use_distilled, reprompt_model=reprompt_model, **kwargs
         )
         return cls(config=config)
 

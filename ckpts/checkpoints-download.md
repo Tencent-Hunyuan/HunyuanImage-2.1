@@ -51,6 +51,13 @@ HunyuanImage uses an MLLM and a byT5 as text encoders.
     └─  ...
     ```
 
+* **Reprompt model**
+
+    [PromptEnhancer-32B](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) can be used as the reprompt model. You can download it by the following command:
+    ```bash
+    hf download PromptEnhancer/PromptEnhancer-32B --local-dir ./ckpts/reprompt_32b
+    ```
+
 <details>
 
 <summary>💡Tips for using hf/huggingface-cli (network problem)</summary>

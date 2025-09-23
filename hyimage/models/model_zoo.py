@@ -149,3 +149,14 @@ def HUNYUANIMAGE_REPROMPT(**kwargs):
         ),
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/reprompt",
     )
+
+def HUNYUANIMAGE_REPROMPT_32B(**kwargs):
+    from hyimage.models.reprompt.reprompt_32b import RePrompt
+    
+    return RepromptConfig(
+        model=L(RePrompt)(
+            models_root_path=None,
+            device_map="auto",
+        ),
+        load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/reprompt_32b",
+    )
