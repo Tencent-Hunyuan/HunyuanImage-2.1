@@ -19,7 +19,7 @@
 
 
 <p align="center">
-    👏 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> and <a href="https://discord.gg/ehjWMqF5wY">Discord</a>
+    👏 Join our <a href="assets/WECHAT.md" target="_blank">WeChat</a> and <a href="https://discord.com/invite/dNBrdrGGMa">Discord</a>
 </p>
 
 
