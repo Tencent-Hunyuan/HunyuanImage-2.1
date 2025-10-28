@@ -31,6 +31,7 @@
 
 
 ## 🔥🔥🔥 最新动态
+- 2025 年 10 月 31 日：🚀 通过集成 [AngelSlim](https://github.com/Tencent/AngelSlim) 优化 FP8 推理，最高可带来约 40% 的生成加速！
 - 2025 年 9 月 18 日：✨ 欢迎体验 [PromptEnhancer-32B 模型](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) 以获得更高质量的提示词增强！
 - 2025 年 9 月 18 日：✨ [HunyuanImage-2.1 的 ComfyUI 工作流](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1) 现已开放体验！
 - 2025 年 9 月 16 日：👑 我们在 Arena 文生图开源模型排行榜上获得第一名！[排行榜](https://artificialanalysis.ai/text-to-image/arena/leaderboard-text)
@@ -110,6 +111,15 @@ HunyuanImage-2.1 **仅支持 2K** 图像生成（如 1:1 时为 2048x2048，16:9
 | 蒸馏文生图模型 | hunyuanimage2.1-distilled | 蒸馏模型，推理更快    | 8                   | 3.25           | 4     |
 | 精修模型                  | hunyuanimage-refiner      | 精修模型                       | N/A                 | N/A            | N/A   |
 
+### FP8 推理
+
+借助 [AngelSlim](https://github.com/Tencent/AngelSlim) 可以显著降低显存占用并提升生成速度：
+- **推荐：** 将 `fp8_mode` 设为 `"weight_only"`，在画质与显存之间取得最佳平衡；
+- **可选：** `"w8a8"` 模式提供更高速度与更低显存占用，但画质可能略有下降；
+- `use_fp8=True` 将被弃用，现已等价映射为 `"weight_only"`。
+
+
+### 示例
 
 ```python
 import os
@@ -119,7 +129,8 @@ from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeli
 
 # 支持的 model_name：hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
 model_name = "hunyuanimage-v2.1"
-pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
+# 支持的 fp8_mode："weight_only"（推荐），"w8a8"（更快）
+pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, fp8_mode="w8a8")
 pipe = pipe.to("cuda")
 
 # 输入提示词

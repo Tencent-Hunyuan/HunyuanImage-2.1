@@ -47,7 +47,12 @@ class HunyuanImagePipelineConfig:
     enable_vae_offloading: bool = True # offload vae after finishing
     enable_byt5_offloading: bool = True # offload byt5 after finishing
 
-    use_fp8: bool = False
+    # FP8 settings
+    use_fp8: bool = False # Deprecated: legacy single FP8 switch. Kept for backward compatibility.
+    use_fp8_weight_only: bool = False # Use FP8 weight only mode
+    use_fp8_w8a8: bool = False # Use FP8 w8a8 mode
+    # Preferred unified FP8 mode: "none" | "weight_only" | "w8a8"
+    fp8_mode: str = "none"
 
     cfg_mode: str = "MIX_mode_0"
     guidance_rescale: float = 0.0
@@ -159,7 +164,8 @@ class HunyuanImagePipeline:
 
     def _load_dit(self):
         dit_device = None
-        if self.config.enable_full_dit_offloading or self.config.use_fp8:
+        fp8_mode = self._resolve_fp8_mode()
+        if self.config.enable_full_dit_offloading or fp8_mode != "none":
             dit_device = 'cpu'
         else:
             dit_device = self.device
@@ -167,17 +173,19 @@ class HunyuanImagePipeline:
         try:
             dit_config = self.config.dit_config
             self.dit = instantiate(dit_config.model, dtype=self.torch_dtype, device=dit_device)
-            if self.config.use_fp8:
-                from hyimage.models.utils.fp8_quantization import convert_fp8_linear
+            if fp8_mode != "none":
+                from angelslim.compressor.diffusion import DynamicDiTQuantizer
+                # Map unified mode to backend quant type
+                quant_type = "fp8-per-tensor-weight-only" if fp8_mode == "weight_only" else "fp8-per-tensor"
+                quantizer = DynamicDiTQuantizer(quant_type=quant_type)
                 if not Path(dit_config.fp8_scale).exists():
                     raise FileNotFoundError(f"FP8 scale file not found: {dit_config.fp8_scale}. Please download from https://huggingface.co/tencent/HunyuanImage-2.1/")
                 if dit_config.fp8_load_from is not None and Path(dit_config.fp8_load_from).exists():
-                    convert_fp8_linear(self.dit, dit_config.fp8_scale)
+                    quantizer.convert_linear(self.dit, scale=dit_config.fp8_scale)
                     load_hunyuan_dit_state_dict(self.dit, dit_config.fp8_load_from, strict=True)
                 else:
                     raise FileNotFoundError(f"FP8 ckpt not found: {dit_config.fp8_load_from}. Please download from https://huggingface.co/tencent/HunyuanImage-2.1/")
-                    load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
-                    convert_fp8_linear(self.dit, dit_config.fp8_scale)
+                   
                 self.dit = self.dit.to(dit_device)
             else:
                 load_hunyuan_dit_state_dict(self.dit, dit_config.load_from, strict=True)
@@ -256,8 +264,32 @@ class HunyuanImagePipeline:
         from hyimage.diffusion.pipelines.hunyuanimage_refiner_pipeline import HunYuanImageRefinerPipeline
         if self.config.enable_stage1_offloading:
             self.offload()
-        self._refiner_pipeline = HunYuanImageRefinerPipeline.from_pretrained(self.config.refiner_model_name, use_fp8=self.config.use_fp8)
+        self._refiner_pipeline = HunYuanImageRefinerPipeline.from_pretrained(
+            self.config.refiner_model_name,
+            fp8_mode=self._resolve_fp8_mode(),
+        )
         return self._refiner_pipeline
+
+    def _resolve_fp8_mode(self) -> str:
+        """Resolve FP8 mode with backward compatibility.
+
+        Preferred: config.fp8_mode in {"none", "weight_only", "w8a8"}.
+        Fallback to old boolean switches if fp8_mode == "none".
+        """
+        mode = getattr(self.config, "fp8_mode", "none") or "none"
+        if mode not in {"none", "weight_only", "w8a8"}:
+            raise ValueError(f"Invalid fp8_mode: {mode}. Expected one of 'none', 'weight_only', 'w8a8'.")
+        if mode != "none":
+            return mode
+        use_fp8_weight_only = getattr(self.config, "use_fp8_weight_only", False)
+        use_fp8_w8a8 = getattr(self.config, "use_fp8_w8a8", False)
+        if use_fp8_weight_only and use_fp8_w8a8:
+            raise ValueError("Both use_fp8_weight_only and use_fp8_w8a8 are True. Please enable only one.")
+        if use_fp8_w8a8:
+            return "w8a8"
+        if self.config.use_fp8 or use_fp8_weight_only:
+            return "weight_only"
+        return "none"
 
     @property
     def reprompt_model(self):
@@ -860,6 +892,8 @@ class HunyuanImagePipeline:
                 self.text_encoder = self.text_encoder.to(device, non_blocking=True)
         if self.vae is not None:
             self.vae = self.vae.to(device, non_blocking=True)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         return self
     
     def offload(self):
@@ -869,6 +903,8 @@ class HunyuanImagePipeline:
             self.text_encoder = self.text_encoder.to('cpu', non_blocking=True)
         if self.vae is not None:
             self.vae = self.vae.to('cpu', non_blocking=True)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         return self
 
     def update_config(self, **kwargs):
