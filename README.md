@@ -33,6 +33,7 @@ This repo contains PyTorch model definitions, pretrained weights and inference/s
 </div>
 
 ## 🔥🔥🔥 Latest Updates
+- October 31, 2025: 🚀 Optimized FP8 inference now available via [AngelSlim](https://github.com/Tencent/AngelSlim), delivering up to 40% faster generation!
 - September 18, 2025: ✨ Try the [PromptEnhancer-32B model](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) for higher-quality prompt enhancement!​.
 - September 18, 2025: ✨ [ComfyUI workflow of HunyuanImage-2.1](https://github.com/KimbingNg/ComfyUI-HunyuanImage2.1) is available now!
 - September 16, 2025: 👑 We achieved the Top1 on Arena's leaderboard for text-to-image open-source models. [Leaderboard](https://artificialanalysis.ai/text-to-image/arena/leaderboard-text)
@@ -122,6 +123,14 @@ Additionally, we **highly recommend** using the full generation pipeline for bet
 | Distilled text-to-image Model | hunyuanimage2.1-distilled | Distilled model for faster inference    | 8                   | 3.25           | 4     |
 | Refiner                  | hunyuanimage-refiner      | The refiner model                       | N/A                 | N/A            | N/A   |
 
+### FP8 Inference
+
+Enable FP8 quantized inference with [Angelslim](https://github.com/Tencent/AngelSlim) to significantly reduce GPU memory usage and speed up generation.  
+- **Recommended:** `fp8_mode="weight_only"` for optimal image quality and memory savings  
+- **Alternative:** `fp8_mode="w8a8"` for maximum speed and lower memory usage (may slightly lower quality)  
+- `use_fp8=True` will be deprecated and now maps to `"weight_only"`.
+
+### Example:
 
 ```python
 import os
@@ -131,7 +140,9 @@ from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeli
 
 # Supported model_name: hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
 model_name = "hunyuanimage-v2.1"
-pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, use_fp8=True)
+# Supported fp8_mode: weight_only, w8a8
+# pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, fp8_mode="weight_only")
+pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, fp8_mode="w8a8")
 pipe = pipe.to("cuda")
 
 # The input prompt

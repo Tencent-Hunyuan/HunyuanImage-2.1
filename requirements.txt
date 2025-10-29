@@ -16,3 +16,4 @@ wheel
 setuptools
 modelscope
 huggingface_hub[cli]
+angelslim[diffusion]==0.2.0
