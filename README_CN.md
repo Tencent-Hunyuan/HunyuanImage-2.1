@@ -130,6 +130,7 @@ from hyimage.diffusion.pipelines.hunyuanimage_pipeline import HunyuanImagePipeli
 # 支持的 model_name：hunyuanimage-v2.1, hunyuanimage-v2.1-distilled
 model_name = "hunyuanimage-v2.1"
 # 支持的 fp8_mode："weight_only"（推荐），"w8a8"（更快）
+# pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, fp8_mode="weight_only")
 pipe = HunyuanImagePipeline.from_pretrained(model_name=model_name, fp8_mode="w8a8")
 pipe = pipe.to("cuda")
 
