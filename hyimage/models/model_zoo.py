@@ -152,11 +152,23 @@ def HUNYUANIMAGE_REPROMPT(**kwargs):
 
 def HUNYUANIMAGE_REPROMPT_32B(**kwargs):
     from hyimage.models.reprompt.reprompt_32b import RePrompt
-    
+
     return RepromptConfig(
         model=L(RePrompt)(
             models_root_path=None,
             device_map="auto",
         ),
         load_from=f"{HUNYUANIMAGE_V2_1_MODEL_ROOT}/reprompt_32b",
+    )
+
+
+def HUNYUANIMAGE_REPROMPT_MINIMAX(**kwargs):
+    from hyimage.models.reprompt.reprompt_cloud import RePromptCloud
+
+    return RepromptConfig(
+        model=L(RePromptCloud)(
+            models_root_path=None,
+            provider="minimax",
+        ),
+        load_from="",
     )

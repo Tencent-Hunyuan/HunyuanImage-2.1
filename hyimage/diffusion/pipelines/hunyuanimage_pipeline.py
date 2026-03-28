@@ -16,7 +16,7 @@ from hyimage.common.config import instantiate
 from hyimage.common.constants import PRECISION_TO_TYPE
 from hyimage.common.format_prompt import MultilingualPromptFormat
 from hyimage.models.text_encoder import PROMPT_TEMPLATE
-from hyimage.models.model_zoo import HUNYUANIMAGE_REPROMPT, HUNYUANIMAGE_REPROMPT_32B
+from hyimage.models.model_zoo import HUNYUANIMAGE_REPROMPT, HUNYUANIMAGE_REPROMPT_32B, HUNYUANIMAGE_REPROMPT_MINIMAX
 from hyimage.models.text_encoder.byT5 import load_glyph_byT5_v2
 from hyimage.models.hunyuan.modules.hunyuanimage_dit import load_hunyuan_dit_state_dict
 from hyimage.diffusion.cfg_utils import AdaptiveProjectedGuidance, rescale_noise_cfg
@@ -84,7 +84,7 @@ class HunyuanImagePipelineConfig:
                 dit_config=dit_config,
                 vae_config=HUNYUANIMAGE_V2_1_VAE_32x(),
                 text_encoder_config=HUNYUANIMAGE_V2_1_TEXT_ENCODER(),
-                reprompt_config=HUNYUANIMAGE_REPROMPT_32B() if reprompt_model == "hunyuanimage-reprompt-32b" else HUNYUANIMAGE_REPROMPT(),
+                reprompt_config=self._resolve_reprompt_config(reprompt_model),
                 shift=4 if use_distilled else 5,
                 default_guidance_scale=3.25 if use_distilled else 3.5,
                 default_sampling_steps=8 if use_distilled else 50,
@@ -93,6 +93,16 @@ class HunyuanImagePipelineConfig:
             )
         else:
             raise ValueError(f"Unsupported HunyuanImage version: {version}. Only 'v2.1' is supported")
+
+    @staticmethod
+    def _resolve_reprompt_config(reprompt_model):
+        """Resolve reprompt model name to its configuration."""
+        if reprompt_model == "hunyuanimage-reprompt-32b":
+            return HUNYUANIMAGE_REPROMPT_32B()
+        elif reprompt_model in ("hunyuanimage-reprompt-minimax", "minimax"):
+            return HUNYUANIMAGE_REPROMPT_MINIMAX()
+        else:
+            return HUNYUANIMAGE_REPROMPT()
 
 
 class HunyuanImagePipeline:
@@ -241,7 +251,13 @@ class HunyuanImagePipeline:
             if self.config.enable_stage1_offloading:
                 self.offload()
             reprompt_config = self.config.reprompt_config
-            self._reprompt_model = instantiate(reprompt_config.model, models_root_path=reprompt_config.load_from, enable_offloading=self.config.enable_reprompt_model_offloading)
+            # Cloud reprompt models don't need models_root_path or offloading
+            is_cloud = not reprompt_config.load_from
+            kwargs = {}
+            if not is_cloud:
+                kwargs["models_root_path"] = reprompt_config.load_from
+                kwargs["enable_offloading"] = self.config.enable_reprompt_model_offloading
+            self._reprompt_model = instantiate(reprompt_config.model, **kwargs)
             loguru.logger.info("✓ Reprompt model loaded")
         except Exception as e:
             raise RuntimeError(f"Error loading reprompt model: {e}") from e
@@ -896,6 +912,12 @@ class HunyuanImagePipeline:
         Args:
             model_name: Model name, supports "hunyuanimage-v2.1", "hunyuanimage-v2.1-distilled"
             use_distilled: Whether to use distilled model (overrides model_name if specified)
+            reprompt_model: Reprompt model to use for prompt enhancement.
+                Supported values:
+                - "hunyuanimage-reprompt-32b" (default): Local 32B model
+                - "hunyuanimage-reprompt": Local smaller model
+                - "hunyuanimage-reprompt-minimax" or "minimax": MiniMax Cloud API
+                  (requires MINIMAX_API_KEY environment variable)
             **kwargs: Additional configuration options
 
         Returns:
