@@ -108,6 +108,32 @@ Prompt enhancement plays a **crucial role** in enabling our model to generate hi
 
 We highly recommend you to try the [PromptEnhancer-32B model](https://huggingface.co/PromptEnhancer/PromptEnhancer-32B) for higher-quality prompt enhancement.
 
+#### Cloud-Based Prompt Enhancement (MiniMax)
+
+If you don't have enough GPU memory for the local reprompt model, you can use MiniMax's Cloud API as a lightweight alternative. This offloads prompt enhancement to the cloud so your GPU is fully available for image generation.
+
+1. Install the OpenAI SDK: `pip install openai`
+2. Set your API key: `export MINIMAX_API_KEY="your-api-key"`
+3. Use `reprompt_model="minimax"` when creating the pipeline:
+
+```python
+pipe = HunyuanImagePipeline.from_pretrained(
+    model_name="hunyuanimage-v2.1",
+    reprompt_model="minimax",  # Use MiniMax Cloud API for prompt enhancement
+    use_fp8=True,
+)
+
+image = pipe(
+    prompt="A cute penguin wearing a scarf",
+    use_reprompt=True,   # Enable cloud prompt enhancement
+    use_refiner=True,
+)
+```
+
+You can also customize the model and base URL via environment variables:
+- `MINIMAX_MODEL`: Model name (default: `MiniMax-M2.7`)
+- `MINIMAX_BASE_URL`: API base URL (default: `https://api.minimax.io/v1`)
+
 
 ### Text to Image
 HunyuanImage-2.1 **only supports 2K** image generation (e.g. 2048x2048 for 1:1 images, 2560x1536 for 16:9 images, etc.).
